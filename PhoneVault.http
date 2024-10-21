@@ -1,0 +1,6 @@
+@PhoneVault_HostAddress = http://localhost:5215
+
+GET {{PhoneVault_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
