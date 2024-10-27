@@ -17,6 +17,7 @@ namespace PhoneVault.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Shipping> Shipping { get; set; }
         public DbSet<AdminLog> AdminLogs { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
         public PhoneVaultContext(DbContextOptions<PhoneVaultContext> options) : base(options) { }
 

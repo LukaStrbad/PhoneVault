@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using PhoneVault.Data;
 using PhoneVault.Repositories;
 using PhoneVault.Services;
@@ -17,6 +16,7 @@ builder.Services.AddDbContext<PhoneVaultContext>(options =>
 // Register repositories and services for dependency injection
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Register Swagger services for API documentation
 builder.Services.AddSwaggerGen();
