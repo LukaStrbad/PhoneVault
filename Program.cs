@@ -18,6 +18,20 @@ builder.Services.AddDbContext<PhoneVaultContext>(options =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
 
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<ReviewService>();
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<CategoryService>();
+
+builder.Services.AddScoped<IAdminLogRepository, AdminLogRepository>();
+builder.Services.AddScoped<AdminLogService>();
+
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<PaymentService>();
+
+
+
 // Register Swagger services for API documentation
 builder.Services.AddSwaggerGen();
 

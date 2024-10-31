@@ -12,6 +12,6 @@ namespace PhoneVault.Models
         public string Status { get; set; } 
         public DateTime EstimatedDelivery { get; set; }
 
-        public Order Order { get; set; }
+        //public Order Order { get; set; }
     }
 }
