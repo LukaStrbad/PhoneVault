@@ -1,0 +1,24 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="container my-4">
+
+  <div class="mb-3">
+    <label for="emailInput" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="emailInput" placeholder="Enter email" formControlName="email">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': loginForm.controls.email.untouched || loginForm.controls.email.valid}">
+      Please provide a valid e-mail.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="passwordInput" class="form-label">Password</label>
+    <input type="password" id="passwordInput" class="form-control" aria-describedby="passwordHelpBlock"
+           placeholder="Enter password" formControlName="password">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': loginForm.controls.password.untouched || loginForm.controls.password.valid}">
+      Please provide a valid password
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
+
+</form>

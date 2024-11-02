@@ -1,0 +1,8 @@
+<div class="card">
+  <div class="card-body">
+    <div class="card-title tex"><h4>{{ product.name }}</h4></div>
+    <div class="card-subtitle">{{ product.sellPrice }} &euro;</div>
+    <div class="card-text">{{ product.description }}</div>
+    <a [routerLink]="['/product', product.id]" [state]="{product}" class="btn btn-primary btn-sm mt-1">Details</a>
+  </div>
+</div>
