@@ -28,7 +28,7 @@ public interface IAuthService
     /// <param name="newUser">The new user to register</param>
     /// <returns>New access and refresh tokens</returns>
     /// <exception cref="UserExistsException">Thrown when a user with the same username already exists</exception>
-    Task<Tokens> Register(User newUser);
+    Task<Tokens> Register(UserRegistration newUser);
 
     /// <summary>
     /// Refreshes an access token using a refresh token.
@@ -85,18 +85,28 @@ public class AuthService : IAuthService
         return tokens;
     }
 
-    public async Task<Tokens> Register(User newUser)
+    public async Task<Tokens> Register(UserRegistration newUserRegistration)
     {
-        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == newUser.Email);
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == newUserRegistration.Email);
         if (existingUser is not null)
         {
             throw new UserExistsException("User already exists");
         }
-        newUser.UserType = "Customer";
+        
+        var newUser = new User
+        {
+            Name = newUserRegistration.Name,
+            Email = newUserRegistration.Email,
+            Password = newUserRegistration.Password,
+            Orders = new List<Order>(),
+            ShoppingCart = new ShoppingCart(),
+            Reviews = new List<Review>(),
+            UserType = "Customer"
+        };
 
         var passwordHasher = new PasswordHasher<UserCredentials>();
         newUser.Password =
-            passwordHasher.HashPassword(new UserCredentials(newUser.Email, newUser.Password), newUser.Password);
+            passwordHasher.HashPassword(new UserCredentials(newUserRegistration.Email, newUserRegistration.Password), newUserRegistration.Password);
         await _context.AddAsync(newUser);
         await _context.SaveChangesAsync();
 
