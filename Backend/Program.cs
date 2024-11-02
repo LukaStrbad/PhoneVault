@@ -14,6 +14,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<PhoneVaultContext>(options =>
     options.UseSqlServer(connectionString));
 
+/*builder.Services.AddDbContext<PhoneVaultContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+);*/
+
 // Register repositories and services for dependency injection
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
@@ -71,6 +75,13 @@ if (app.Environment.IsDevelopment())
     // Enable middleware to serve Swagger UI
     app.UseSwaggerUI();
 }
+
+app.UseCors(policyBuilder => policyBuilder
+    .AllowCredentials()
+    .WithOrigins("http://localhost:4200")
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+);
 
 app.UseHttpsRedirection();
 

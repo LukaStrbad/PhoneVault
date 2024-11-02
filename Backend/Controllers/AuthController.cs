@@ -47,7 +47,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
     [HttpPost("register")]
     [ProducesResponseType<Ok<string>>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<string>> Register(User newUser)
+    public async Task<ActionResult<string>> Register(UserRegistration newUser)
     {
         try
         {

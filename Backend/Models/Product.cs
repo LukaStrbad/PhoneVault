@@ -10,14 +10,13 @@ namespace PhoneVault.Models
         public string Description { get; set; }
         public string Specification { get; set; }
         public decimal NetPrice { get; set; }
-        public decimal SellPrice { get; set; }  
+        public decimal SellPrice { get; set; }
         public int QuantityInStock  { get; set; }
-        public int CategoryId { get; set; }
-        public DateTime? CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; } = DateTime.Now;
 
-        //public Category Category { get; set; }
-        //public ICollection<Review> Reviews { get; set; }
+        public Category? Category { get; set; }
+        public ICollection<Review> Reviews { get; set; } = [];
 
     }
 }
