@@ -8,7 +8,7 @@
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Relationships
-        public User User { get; set; }
+        //public User User { get; set; }
         public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; }
     }
 }

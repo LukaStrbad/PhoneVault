@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PhoneVault.Data;
+using PhoneVault.Models;
 using PhoneVault.Repositories;
 using PhoneVault.Services;
 
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<PhoneVaultContext>(options =>
 // Register repositories and services for dependency injection
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
@@ -30,7 +32,17 @@ builder.Services.AddScoped<AdminLogService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<PaymentService>();
 
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<InventoryService>();
 
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<OrderService>();
+
+builder.Services.AddScoped<IShippingRepository, ShippingRepository>();
+builder.Services.AddScoped<ShippingService>();
+
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+builder.Services.AddScoped<ShoppingCartService>();
 
 // Register Swagger services for API documentation
 builder.Services.AddSwaggerGen();
