@@ -6,7 +6,6 @@
         public int AdminId { get; set; }
         public string Action { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-
-        public User Admin { get; set; }
+        //public User Admin { get; set; }
     }
 }

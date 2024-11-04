@@ -13,10 +13,11 @@ namespace PhoneVault.Models
         public string PaymentStatus { get; set; }
         public string ShippingAddress { get; set; }
 
-        public User User { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
-        public Payment Payment { get; set; }
-        public Shipping Shipping { get; set; }
+
+        //public User User { get; set; }
+        //public Payment Payment { get; set; }
+        //public Shipping Shipping { get; set; }
 
     }
 }

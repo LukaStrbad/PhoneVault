@@ -9,7 +9,7 @@
         public string Comment { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public User User { get; set; }
-        public Product Product { get; set; }
+        //public User User { get; set; }
+        //public Product Product { get; set; }
     }
 }
