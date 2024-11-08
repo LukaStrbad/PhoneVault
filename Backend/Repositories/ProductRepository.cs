@@ -32,7 +32,7 @@ namespace PhoneVault.Repositories
         //public async Task<IEnumerable<Product>> GetAllProducts() =>
         //    await _context.Products.ToListAsync();
 
-        public async Task<Product> GetProductById(int id) =>
+        public async Task<Product?> GetProductById(int id) =>
             await _context.Products.FindAsync(id);
 
         public async Task AddProduct(Product product)
@@ -55,7 +55,28 @@ namespace PhoneVault.Repositories
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
             }
-        }   
+        }
+
+        public async Task<IEnumerable<Review>> GetReviewsByProductId(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.Reviews)
+                .ThenInclude(r => r.User)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            return product?.Reviews ?? new List<Review>();
+        }
+
+        public async Task AddReviewToProduct(int productId, Review review)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
+            {
+                throw new Exception("Product not found");
+            }
+            
+            product.Reviews.Add(review);
+            await _context.SaveChangesAsync();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PhoneVault.Data;
+using PhoneVault.Enums;
 using PhoneVault.Exceptions;
 using PhoneVault.Models;
 
@@ -56,6 +57,7 @@ public class AuthService : IAuthService
         {
             throw new ArgumentException("JWT secret is missing");
         }
+
         _privateKey = Encoding.ASCII.GetBytes(secret);
     }
 
@@ -92,7 +94,7 @@ public class AuthService : IAuthService
         {
             throw new UserExistsException("User already exists");
         }
-        
+
         var newUser = new User
         {
             Name = newUserRegistration.Name,
@@ -101,12 +103,13 @@ public class AuthService : IAuthService
             Orders = new List<Order>(),
             ShoppingCart = new ShoppingCart(),
             Reviews = new List<Review>(),
-            UserType = "Customer"
+            UserType = UserTypes.Customer
         };
 
         var passwordHasher = new PasswordHasher<UserCredentials>();
         newUser.Password =
-            passwordHasher.HashPassword(new UserCredentials(newUserRegistration.Email, newUserRegistration.Password), newUserRegistration.Password);
+            passwordHasher.HashPassword(new UserCredentials(newUserRegistration.Email, newUserRegistration.Password),
+                newUserRegistration.Password);
         await _context.AddAsync(newUser);
         await _context.SaveChangesAsync();
 
@@ -181,16 +184,8 @@ public class AuthService : IAuthService
         ]);
 
         if (user.UserType is null) return ci;
-        
-        switch (user.UserType)
-        {
-            case "Admin":
-                ci.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-                break;
-            case "Customer":
-                ci.AddClaim(new Claim(ClaimTypes.Role, "Customer"));
-                break;
-        }
+
+        ci.AddClaim(new Claim(ClaimTypes.Role, user.UserType));
 
         return ci;
     }
@@ -215,12 +210,13 @@ public class AuthService : IAuthService
         {
             throw new SecurityTokenMalformedException("Invalid token");
         }
-        
+
         var email = principal.FindFirst(ClaimTypes.Email)?.Value;
         if (email is null)
         {
             throw new SecurityTokenMalformedException("Invalid token");
         }
+
         return email;
     }
 

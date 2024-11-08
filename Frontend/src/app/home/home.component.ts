@@ -18,6 +18,7 @@ export class HomeComponent {
   constructor(
     private productService: ProductService
   ) {
+    this.products = this.productService.productCache;
     this.productService.getAll().then(products => {
       this.products = products;
     });

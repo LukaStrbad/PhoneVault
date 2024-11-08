@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PhoneVault.Models;
 using PhoneVault.Services;
 
@@ -51,8 +52,7 @@ namespace PhoneVault.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, Product product)
         {
-            if (id != product.Id) return BadRequest();
-
+            product.Id = id;
             await _productService.UpdateProductAsync(product);
             return NoContent();
         }
@@ -62,6 +62,21 @@ namespace PhoneVault.Controllers
         {
             await _productService.DeleteProductAsync(id);
             return NoContent();
+        }
+        
+        [HttpGet("{id}/reviews")]
+        public async Task<ActionResult<IEnumerable<ReviewResponse>>> GetReviews(int id)
+        {
+            var reviews = await _productService.GetReviewsByProductIdAsync(id);
+            return Ok(reviews);
+        }
+        
+        [HttpPost("{id}/reviews")]
+        [Authorize("user")]
+        public async Task<ActionResult> AddReview(int id, [FromBody] ReviewRequest review)
+        {
+            await _productService.AddReviewToProductAsync(id, review.Rating, review.Comment, User);
+            return CreatedAtAction(nameof(GetReviews), new { id }, review);
         }
     }
 

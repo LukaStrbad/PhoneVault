@@ -1,5 +1,9 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PhoneVault.Data;
+using PhoneVault.Enums;
 using PhoneVault.Models;
 using PhoneVault.Repositories;
 using PhoneVault.Services;
@@ -59,6 +63,32 @@ builder.Services.AddScoped<UserService>();
 
 // Register Swagger services for API documentation
 builder.Services.AddSwaggerGen();
+
+var secret = builder.Configuration["Jwt:Secret"];
+if (string.IsNullOrEmpty(secret))
+{
+    throw new ArgumentException("JWT secret is missing");
+}
+
+var privateKey = Encoding.ASCII.GetBytes(secret);
+
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        IssuerSigningKey = new SymmetricSecurityKey(privateKey),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("admin", p => p.RequireRole(UserTypes.Admin))
+    .AddPolicy("user", p => p.RequireRole(UserTypes.Customer, UserTypes.Admin));
+
 
 // Add additional repositories and services as needed
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();

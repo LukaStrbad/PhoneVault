@@ -1,0 +1,45 @@
+<div class="container">
+  <a routerLink="/admin/add-product">
+    <button class="btn btn-primary mt-3">Add</button>
+  </a>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Specification</th>
+        <th>Sell price (&euro;)</th>
+        <th>Stock</th>
+        <th>Last update</th>
+        <th>Category</th>
+        <th>Reviews</th>
+        <th><!-- ACTIONS --></th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @for (product of products; track product.id) {
+          <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.specification }}</td>
+            <td>{{ product.sellPrice }}</td>
+            <td>{{ product.quantityInStock }}</td>
+            <td>{{ product.updatedDate | date }}</td>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>
+              <a [routerLink]="['/admin/edit-product', product.id]" [state]="{product}">
+                <button class="btn btn-outline-danger">Edit</button>
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

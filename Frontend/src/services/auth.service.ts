@@ -47,6 +47,7 @@ export class AuthService {
     const accessToken = this.accessToken;
     if (accessToken) {
       const decodedToken = this.setUserAndToken(accessToken);
+      console.log(this.user);
 
       const expired = decodedToken.exp * 1000 < Date.now();
 
@@ -78,10 +79,12 @@ export class AuthService {
   }
 
   private setUser(token: DecodedToken) {
+    const userType = token.role === "Admin" ? "Admin" : "Customer";
     this.user = {
       id: parseInt(token.id),
       name: token.given_name,
-      email: token.email
+      email: token.email,
+      userType
     };
   }
 
@@ -119,6 +122,6 @@ interface DecodedToken extends JwtPayload {
   unique_name: string;
   given_name: string;
   email: string;
-  role?: string | string[];
+  role?: string;
   exp: number;
 }

@@ -9,5 +9,8 @@ namespace PhoneVault.Repositories
         Task AddProduct(Product product);
         Task UpdateProduct(Product product);
         Task DeleteProduct(int id);
+        Task<IEnumerable<Review>> GetReviewsByProductId(int id);
+        Task AddReviewToProduct(int productId, Review review);
+        
     }
 }

@@ -10,6 +10,18 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" routerLink="/">Home</a>
         </li>
+
+        @if (auth.user?.userType === 'Admin') {
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Admin
+            </a>
+
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/admin/product-list">Product list</a></li>
+            </ul>
+          </li>
+        }
       </ul>
 
       <div class="col-md-3 text-lg-end">
