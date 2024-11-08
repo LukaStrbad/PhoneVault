@@ -62,4 +62,30 @@ export class ProductService {
   async addReview(productId: number, rating: number, comment: string) {
     return firstValueFrom(this.http.post<Review>(`${url}/${productId}/reviews`, { rating, comment }));
   }
+
+  async create(product: ProductRequest) {
+    return firstValueFrom(this.http.post<ProductRequest>(url, product));
+  }
+
+  async update(id: number, product: ProductRequest) {
+    return firstValueFrom(this.http.put<ProductRequest>(`${url}/${id}`, product));
+  }
+
+  async delete(id: number) {
+    return firstValueFrom(this.http.delete<void>(`${url}/${id}`));
+  }
+
+  async getReviews(productId: number) {
+    const reviews = await firstValueFrom(this.http.get<Review[]>(`${url}/${productId}/reviews`));
+    return reviews.map(review => {
+      return {
+        ...review,
+        createdAt: new Date(review.createdAt)
+      };
+    })
+  }
+
+  async addReview(productId: number, rating: number, comment: string) {
+    return firstValueFrom(this.http.post<Review>(`${url}/${productId}/reviews`, { rating, comment }));
+  }
 }
