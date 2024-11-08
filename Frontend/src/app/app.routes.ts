@@ -4,6 +4,9 @@ import { RegisterComponent } from "./register/register.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { HomeComponent } from "./home/home.component";
 import { ProductComponent } from "./product/product.component";
+import { AdminComponent } from "./admin/admin.component";
+import { AddProductComponent } from "./admin/add-product/add-product.component";
+import { ProductListComponent } from "./admin/product-list/product-list.component";
 
 export const routes: Routes = [
   {
@@ -21,6 +24,24 @@ export const routes: Routes = [
   {
     path: 'product/:id',
     component: ProductComponent,
+  },
+  {
+    path: 'admin',
+    component: AdminComponent,
+    children: [
+      {
+        path: 'product-list',
+        component: ProductListComponent,
+      },
+      {
+        path: 'add-product',
+        component: AddProductComponent,
+      },
+      {
+        path: 'edit-product/:id',
+        component: AddProductComponent,
+      }
+    ]
   },
   {
     path: '**',

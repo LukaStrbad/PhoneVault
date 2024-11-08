@@ -19,7 +19,7 @@ namespace PhoneVault.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
+        public async Task<ActionResult<IEnumerable<Review>>> GetReviews(int productId)
         {
             var reviews = await _reviewService.GetAllReviewsAsync();
             return Ok(reviews);

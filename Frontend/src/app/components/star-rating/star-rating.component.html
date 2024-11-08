@@ -1,0 +1,7 @@
+<div class="d-flex gap-1" [ngClass]="{'interactive': interactive}">
+  @for (i of productStars; track i) {
+    <i class="bi bi-star-fill" [ngClass]="{'yellow': i <= rating, 'yellow-faded': i<= dragRating}"
+       [ngStyle]="{'font-size': size}" (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave()"
+       (click)="onRated(i)"></i>
+  }
+</div>
