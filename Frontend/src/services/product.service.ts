@@ -26,7 +26,15 @@ export class ProductService {
   }
 
   async get(id: number) {
-    return firstValueFrom(this.http.get<Product>(`${url}/${id}`));
+    const value = await firstValueFrom(this.http.get<Product>(`${url}/${id}`));
+    // Update cache
+    const index = this._productCache.findIndex(p => p.id === id);
+    if (index !== -1) {
+      this._productCache[index] = value;
+    } else {
+      this._productCache.push(value);
+    }
+    return value;
   }
 
   async create(product: ProductRequest) {
@@ -34,7 +42,7 @@ export class ProductService {
   }
 
   async update(id: number, product: ProductRequest) {
-    return firstValueFrom(this.http.put<ProductRequest>(`${url}/${id}`, product));
+     return await firstValueFrom(this.http.put(`${url}/${id}`, product));
   }
 
   async delete(id: number) {

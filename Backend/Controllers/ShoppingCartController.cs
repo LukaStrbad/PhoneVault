@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PhoneVault.Controllers;
 using PhoneVault.Models;
@@ -8,61 +8,42 @@ namespace PhoneVault.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ShoppingCartController : ControllerBase
     {
         private readonly ShoppingCartService _shoppingCartService;
+
         public ShoppingCartController(ShoppingCartService shoppingCartService)
         {
             _shoppingCartService = shoppingCartService;
         }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShoppingCart>>> GetAllShoppingCarts()
+        public async Task<ActionResult<IEnumerable<ShoppingCartItem>>> GetShoppingCart()
         {
-            var carts = await _shoppingCartService.GetAllShoppingCarts();
-            if (carts == null)
+            var shoppingCart = await _shoppingCartService.GetShoppingCart(User);
+            if (shoppingCart is null)
             {
-                return NotFound();
+                await _shoppingCartService.AddShoppingCart(User);
+                shoppingCart = await _shoppingCartService.GetShoppingCart(User);
             }
-            return Ok(carts);
+
+            return Ok(shoppingCart!.ShoppingCartItems);
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ShoppingCart>> GetShoppingCartById(int id)
-        {
-            var cart = await _shoppingCartService.GetShoppingCartById(id);
-            if (cart == null)
-            {
-                return NotFound();
-            }
-            return Ok(cart);
-        }
+
         [HttpPost]
         public async Task<ActionResult> AddShoppingCart(ShoppingCartDTO cart)
         {
-            if (cart == null)
-            {
-                return BadRequest();
-            }
-            await _shoppingCartService.AddShoppingCart(cart);
-            return Ok(cart);
+            await _shoppingCartService.AddShoppingCart(User);
+            return Ok();
         }
+
         [HttpPut]
-        public async Task<ActionResult> UpdateShoppingCart(ShoppingCart shoppingCart)
+        public async Task<ActionResult> UpdateShoppingCart(IEnumerable<ShoppingCartItem> shoppingCartItems)
         {
-            if(shoppingCart == null)
-            {
-                return BadRequest();
-            }
-            await _shoppingCartService.UpdateShoppingCart(shoppingCart);
-            return Ok(shoppingCart);
-        }
-        [HttpDelete]
-        public async Task<ActionResult> DeleteShoppingCart(int id)
-        {
-            if(id == 0)
-            {
-                return BadRequest();
-            }
-            await _shoppingCartService.DeleteShoppingCart(id);
+            var items = shoppingCartItems.ToList();
+            items.ForEach(item => { item.Id = 0; });
+            await _shoppingCartService.UpdateShoppingCart(User, items);
             return Ok();
         }
     }

@@ -104,6 +104,7 @@ export class AddProductComponent {
 
       // Show toast
       this.toastComponent.show("Success", "Product added successfully");
+      this.productForm.reset();
     } catch (e) {
       // Show toast
       this.toastComponent.show("Error", "Failed to add product");

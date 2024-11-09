@@ -16,5 +16,4 @@ export interface Product extends ProductRequest {
   updatedDate: Date;
   // TODO: Implement interfaces for the following properties.
   category: any;
-  reviews: any[];
 }
