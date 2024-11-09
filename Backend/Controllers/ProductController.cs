@@ -51,21 +51,6 @@ namespace PhoneVault.Controllers
             await _productService.DeleteProductAsync(id);
             return NoContent();
         }
-        
-        [HttpGet("{id}/reviews")]
-        public async Task<ActionResult<IEnumerable<ReviewResponse>>> GetReviews(int id)
-        {
-            var reviews = await _productService.GetReviewsByProductIdAsync(id);
-            return Ok(reviews);
-        }
-        
-        [HttpPost("{id}/reviews")]
-        [Authorize("user")]
-        public async Task<ActionResult> AddReview(int id, [FromBody] ReviewRequest review)
-        {
-            await _productService.AddReviewToProductAsync(id, review.Rating, review.Comment, User);
-            return CreatedAtAction(nameof(GetReviews), new { id }, review);
-        }
     }
 
 }

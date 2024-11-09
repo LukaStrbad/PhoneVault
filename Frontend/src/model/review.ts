@@ -3,5 +3,6 @@ export interface Review {
   rating: number;
   comment: string;
   createdAt: Date;
-  userName: string | null;
+  userName: string;
+  userId: number;
 }

@@ -40,27 +40,6 @@ namespace PhoneVault.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
-        public async Task<IEnumerable<Review>> GetReviewsByProductId(int id)
-        {
-            var product = await _context.Products
-                .Include(p => p.Reviews)
-                .ThenInclude(r => r.User)
-                .FirstOrDefaultAsync(p => p.Id == id);
-            return product?.Reviews ?? new List<Review>();
-        }
-
-        public async Task AddReviewToProduct(int productId, Review review)
-        {
-            var product = await _context.Products.FindAsync(productId);
-            if (product == null)
-            {
-                throw new Exception("Product not found");
-            }
-            
-            product.Reviews.Add(review);
-            await _context.SaveChangesAsync();
-        }
     }
 
 }

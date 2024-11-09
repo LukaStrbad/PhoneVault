@@ -15,8 +15,12 @@
         <p>ID: {{ id }}</p>
         <p>{{ product.description }}</p>
         <p>Available in stock: {{ product.quantityInStock }}</p>
-        <button class="btn btn-primary me-2">Buy now</button>
-        <button class="btn btn-secondary">Add to cart</button>
+        <button class="btn btn-success me-2">Buy now</button>
+        @if (showAddToCartButton()) {
+          <button (click)="addToCart()" class="btn btn-outline-secondary">Add to cart</button>
+        } @else {
+          <button (click)="removeFromCart()" class="btn btn-outline-danger">Remove from cart</button>
+        }
       </div>
     </div>
 
@@ -37,19 +41,7 @@
           <p>No reviews</p>
         } @else {
           @for (review of reviews; track review) {
-            <div class="card mb-2">
-              <div class="card-body">
-                <div class="d-flex justify-content-between">
-                  <app-star-rating [rating]="review.rating"></app-star-rating>
-                  <div>
-                    <span class="fw-bold">{{ review.userName }}</span>
-                    <span class="ms-2 me-2">|</span>
-                    <span>{{ review.createdAt | date:'dd.MM.yyyy. HH:mm' }}</span>
-                  </div>
-                </div>
-                <p>{{ review.comment }}</p>
-              </div>
-            </div>
+            <app-review-card [review]="review" [editable]="auth.user?.id == review.userId" (onUpdate)="onReviewUpdate(review, $event)" (onDelete)="onReviewDelete(review)"></app-review-card>
           }
         }
       </div>
@@ -57,13 +49,15 @@
       <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
           <label for="reviewInput" class="form-label">Review</label>
-          <textarea class="form-control" id="reviewInput" rows="3" formControlName="comment" placeholder="Enter review comment"></textarea>
+          <textarea class="form-control" id="reviewInput" rows="3" formControlName="comment"
+                    placeholder="Enter review comment"></textarea>
         </div>
 
         <div class="d-flex gap-2 align-items-baseline">
           <label for="ratingInput" class="form-label">Rating</label>
-          <input type="number" id="ratingInput" min="0" max="5" step="1" class="d-none" #ratingInput formControlName="rating">
-          <app-star-rating [interactive]="true" size="1.2em" (ratingChange)="commentForm.controls.rating.setValue($event)"></app-star-rating>
+          <input type="number" id="ratingInput" min="0" max="5" step="1" class="d-none" formControlName="rating">
+          <app-star-rating [interactive]="true" size="1.2em"
+                           (ratingChange)="commentForm.controls.rating.setValue($event)"></app-star-rating>
         </div>
 
         <button type="submit" class="btn btn-primary btn-sm" [disabled]="!commentForm.valid">Submit</button>
