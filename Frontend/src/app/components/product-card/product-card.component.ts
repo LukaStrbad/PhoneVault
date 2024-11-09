@@ -6,8 +6,6 @@ import { ShoppingCartService } from "../../../services/shopping-cart.service";
 
 const maxSpecificationLength = 3;
 
-const maxSpecificationLength = 3;
-
 @Component({
   selector: 'app-product-card',
   standalone: true,
