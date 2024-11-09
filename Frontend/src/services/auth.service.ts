@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { User } from "../model/user";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { firstValueFrom } from "rxjs";
+import { ShoppingCartService } from "./shopping-cart.service";
 
 const url = `${environment.apiUrl}/auth`;
 

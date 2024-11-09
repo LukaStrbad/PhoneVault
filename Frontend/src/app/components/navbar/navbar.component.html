@@ -24,12 +24,20 @@
         }
       </ul>
 
-      <div class="col-md-3 text-lg-end">
+      <div class="col-md-3 d-flex justify-content-end gap-3">
         @if (auth.isUserLoggedIn()) {
-          <div>
-            <span>{{ auth.user?.name }}</span>
-            <i class="bi bi-person-circle ms-2"></i>
+          <div class="dropdown">
+            <div role="button" data-bs-toggle="dropdown">
+              <span>{{ auth.user?.name }}</span>
+              <i class="bi bi-person-circle ms-2 fs-5"></i>
+            </div>
+
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item logout-button" (click)="auth.logout()">Logout</a></li>
+            </ul>
+
           </div>
+
         } @else {
           <a routerLink="login">
             <button type="button" class="btn btn-outline-primary me-2">Login</button>
@@ -38,7 +46,17 @@
             <button type="button" class="btn btn-primary">Sign-up</button>
           </a>
         }
+
+        <a routerLink="/shopping-cart" class="cart-link">
+          <div class="position-relative">
+            <i class="bi bi-cart fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ shoppingCart.cart().length }}
+          </span>
+          </div>
+        </a>
       </div>
+
     </div>
   </div>
 </nav>

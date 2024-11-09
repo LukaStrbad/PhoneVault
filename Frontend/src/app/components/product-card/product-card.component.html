@@ -7,6 +7,13 @@
         <li [ngClass]="{'invisible': spec === ''}">{{ spec }}</li>
       }
     </ul>
-    <a [routerLink]="['/product', product.id]" [state]="{product}" class="btn btn-primary btn-sm mt-1">Details</a>
+    <a class="btn btn-success btn-sm mt-1">Buy now</a>
+    <a [routerLink]="['/product', product.id]" [state]="{product}" class="btn btn-outline-primary btn-sm ms-2 mt-1">Details</a>
+    @if (showAddToCartButton()) {
+      <button (click)="addToCart()" class="btn btn-outline-secondary btn-sm ms-2 mt-1" (close)="addToCart()">Add to cart
+      </button>
+    } @else {
+      <button (click)="removeFromCart()" class="btn btn-outline-danger btn-sm ms-2 mt-1">Remove from cart</button>
+    }
   </div>
 </div>

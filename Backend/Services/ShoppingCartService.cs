@@ -1,40 +1,55 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+﻿using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using PhoneVault.Data;
 using PhoneVault.Models;
-using PhoneVault.Repositories;
-using PhoneVault.Services;
 
-namespace PhoneVault.Services
+namespace PhoneVault.Services;
+
+public class ShoppingCartService(PhoneVaultContext context)
 {
-    public class ShoppingCartService
+    public async Task<ShoppingCart?> GetShoppingCart(ClaimsPrincipal claimsPrincipal)
     {
-        private readonly IShoppingCartRepository _shoppingCartRepository;
-        public ShoppingCartService(IShoppingCartRepository shoppingCartRepository)
-        {
-            _shoppingCartRepository = shoppingCartRepository;
-        }
-        public async Task<IEnumerable<ShoppingCart>> GetAllShoppingCarts() =>
-            await _shoppingCartRepository.GetShoppingCarts();
+        var user = await GetUser(claimsPrincipal);
+        return user.ShoppingCart;
+    }
 
-        public async Task<ShoppingCart> GetShoppingCartById(int id) =>
-            await _shoppingCartRepository.GetShoppingCartById(id);
+    public async Task AddShoppingCart(ClaimsPrincipal claimsPrincipal)
+    {
+        var user = await GetUser(claimsPrincipal);
 
-        public async Task AddShoppingCart(ShoppingCart cart)
+        var cart = new ShoppingCart
         {
-            if (cart == null)
-            {
-                throw new ArgumentNullException(nameof(cart));
-            }
-            await _shoppingCartRepository.AddShoppingCart(cart);
-        }
-        public async Task UpdateShoppingCart(ShoppingCart cart)
+            ShoppingCartItems = []
+        };
+
+        user.ShoppingCart = cart;
+        await context.SaveChangesAsync();
+    }
+    public async Task UpdateShoppingCart(ClaimsPrincipal claimsPrincipal, IEnumerable<ShoppingCartItem> shoppingCartItems)
+    {
+        var user = await GetUser(claimsPrincipal);
+        user.ShoppingCart.ShoppingCartItems = shoppingCartItems.ToList();
+        await context.SaveChangesAsync();
+    }
+
+    private async Task<User> GetUser(ClaimsPrincipal claimsPrincipal)
+    {
+        var userId = claimsPrincipal.FindFirstValue("id");
+        if (!int.TryParse(userId, out var idInt))
         {
-            if(cart== null) throw new ArgumentNullException(nameof(cart));
-            await _shoppingCartRepository.UpdateShoppingCart(cart);
+            throw new Exception("Invalid user id");
         }
-        public async Task DeleteShoppingCart(int id)
+
+        var user = await context.Users
+            .Where(u => u.Id == idInt)
+            .Include(u => u.ShoppingCart).ThenInclude(c => c.ShoppingCartItems)
+            .FirstOrDefaultAsync();
+
+        if (user is null)
         {
-            if(id==0) throw new ArgumentNullException(nameof(id));
-            await _shoppingCartRepository.DeleteShoppingCart(id);
+            throw new Exception("User not found");
         }
+        
+        return user;
     }
 }
