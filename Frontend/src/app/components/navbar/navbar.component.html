@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container">
+    <a class="navbar-brand" href="#">PhoneVault</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="/">Home</a>
+        </li>
+
+        @if (auth.user?.userType === 'Admin') {
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Admin
+            </a>
+
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/admin/product-list">Product list</a></li>
+            </ul>
+          </li>
+        }
+      </ul>
+
+      <div class="col-md-3 d-flex justify-content-end gap-3">
+        @if (auth.isUserLoggedIn()) {
+          <div class="dropdown">
+            <div role="button" data-bs-toggle="dropdown">
+              <span>{{ auth.user?.name }}</span>
+              <i class="bi bi-person-circle ms-2 fs-5"></i>
+            </div>
+
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item logout-button" (click)="auth.logout()">Logout</a></li>
+            </ul>
+
+          </div>
+
+        } @else {
+          <a routerLink="login">
+            <button type="button" class="btn btn-outline-primary me-2">Login</button>
+          </a>
+          <a routerLink="register">
+            <button type="button" class="btn btn-primary">Sign-up</button>
+          </a>
+        }
+
+        <a routerLink="/shopping-cart" class="cart-link">
+          <div class="position-relative">
+            <i class="bi bi-cart fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ shoppingCart.cart().length }}
+          </span>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</nav>

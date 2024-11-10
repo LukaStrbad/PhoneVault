@@ -1,0 +1,41 @@
+<form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="container my-4">
+
+  <div class="mb-3">
+    <label for="nameInput" class="form-label">Name</label>
+    <input type="text" class="form-control" id="nameInput" placeholder="Enter name" formControlName="name">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': registrationForm.controls.name.untouched || registrationForm.controls.name.valid}">
+      Please provide a valid name.
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="emailInput" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="emailInput" placeholder="Enter email" formControlName="email">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': registrationForm.controls.email.untouched || registrationForm.controls.email.valid}">
+      Please provide a valid e-mail.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="passwordInput" class="form-label">Password</label>
+    <input type="password" id="passwordInput" class="form-control" aria-describedby="passwordHelpBlock"
+           placeholder="Enter password" formControlName="password">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': registrationForm.controls.password.untouched || registrationForm.controls.password.valid}">
+      Please provide a password with at least 8 characters.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="passwordInput" class="form-label">Password</label>
+    <input type="password" id="passwordConfirmInput" class="form-control" aria-describedby="passwordHelpBlock"
+           placeholder="Confirm password" formControlName="confirmPassword">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': registrationForm.controls.confirmPassword.untouched || !registrationForm.hasError('passwordMismatch')}">
+      Please enter the same password again.
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="!registrationForm.valid">Sign up</button>
+</form>

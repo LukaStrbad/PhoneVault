@@ -1,0 +1,10 @@
+td {
+  a {
+    color: inherit;
+    text-decoration: inherit;
+
+    &:hover {
+      color: var(--bs-primary);
+    }
+  }
+}

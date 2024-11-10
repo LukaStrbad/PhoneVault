@@ -1,0 +1,80 @@
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="container my-4">
+
+  <div class="mb-3">
+    <label for="nameInput" class="form-label">Name</label>
+    <input type="text" class="form-control" id="nameInput" placeholder="Enter name" formControlName="name">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': productForm.controls.name.untouched || productForm.controls.name.valid}">
+      Please provide a name.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="brandInput" class="form-label">Brand</label>
+    <input type="text" class="form-control" id="brandInput" placeholder="Enter brand" formControlName="brand">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': productForm.controls.brand.untouched || productForm.controls.brand.valid}">
+      Please provide a brand name.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="descInput" class="form-label">Description</label>
+    <input type="text" class="form-control" id="descInput" placeholder="Enter description" formControlName="description">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': productForm.controls.description.untouched || productForm.controls.description.valid}">
+      Please provide a description.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="specificationInput" class="form-label">Specification</label>
+    <textarea type="text" class="form-control" id="specificationInput" placeholder="Enter specification"
+           formControlName="specification" rows="5" ></textarea>
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': productForm.controls.specification.untouched || productForm.controls.specification.valid}">
+      Please provide a specification.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="netPriceInput" class="form-label">Net price</label>
+    <input type="number" class="form-control" id="netPriceInput" placeholder="Enter net price"
+           formControlName="netPrice" min="0" step="0.01">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': productForm.controls.netPrice.untouched || productForm.controls.netPrice.valid}">
+      Please provide a net price.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="sellPriceInput" class="form-label">Sell price</label>
+    <input type="number" class="form-control" id="sellPriceInput" placeholder="Enter sell price"
+           formControlName="sellPrice" min="0" step="0.01">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': productForm.controls.sellPrice.untouched || productForm.controls.sellPrice.valid}">
+      Please provide a sell price.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="quantityInput" class="form-label">Quantity in stock</label>
+    <input type="number" class="form-control" id="quantityInput" placeholder="Enter quantity in stock"
+           formControlName="quantityInStock" min="0">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': productForm.controls.quantityInStock.untouched || productForm.controls.quantityInStock.valid}">
+      Please provide a quantity in stock.
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="!productForm.valid">
+    @if (componentType == ComponentType.Add) {
+      Add product
+    } @else {
+      Update product
+    }
+  </button>
+
+  <app-toast #toast></app-toast>
+
+</form>

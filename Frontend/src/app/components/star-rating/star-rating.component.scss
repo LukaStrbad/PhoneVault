@@ -1,0 +1,11 @@
+div {
+  &:not(:hover), &:not(.interactive) {
+    .yellow {
+      color: rgb(255, 193, 7);
+    }
+  }
+
+  .yellow-faded {
+    color: rgba(255, 193, 7, 0.7);
+  }
+}
