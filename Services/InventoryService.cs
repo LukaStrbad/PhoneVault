@@ -1,4 +1,5 @@
-﻿using PhoneVault.Models;
+﻿using Azure.Identity;
+using PhoneVault.Models;
 using PhoneVault.Repositories;
 using PhoneVault.Services;
 
@@ -15,10 +16,16 @@ namespace PhoneVault.Services
             await _inventoryRepository.GetAllInventoryRecords();
         public async Task<Inventory> GetInventoryRecordById(int id) =>
             await _inventoryRepository.GetInventoryRecordById(id);
-        public async Task AddInventoryRecord(Inventory record)
+        public async Task AddInventoryRecord(InventoryDTO recordDto)
         {
-            if(record == null) throw new ArgumentNullException(nameof(record));
-            await _inventoryRepository.AddInventoryRecord(record);
+            if(recordDto == null) throw new ArgumentNullException(nameof(recordDto));
+            var record = new Inventory
+            {
+                ProductId = recordDto.ProductId,
+                Quantity = recordDto.Quantity,
+                LastUpdated= DateTime.UtcNow,
+            };
+
         }
         public async Task UpdateInventoryRecord(Inventory record)
         {

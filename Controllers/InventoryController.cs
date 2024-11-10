@@ -35,7 +35,7 @@ namespace PhoneVault.Controllers
             return Ok(record);
         }
         [HttpPost]
-        public async Task<ActionResult> AddInventoryRecord(Inventory record)
+        public async Task<ActionResult> AddInventoryRecord(InventoryDTO record)
         {
             if (record == null)
             {

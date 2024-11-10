@@ -16,8 +16,15 @@ namespace PhoneVault.Services
             await _categoryRepository.GetAllCategories();
         public async Task<Category> GetCategoryById(int id) =>
             await _categoryRepository.GetCategoryById(id);
-        public async Task AddCategoryAsync(Category category) =>
-            await _categoryRepository.AddCategory(category);
+        public async Task AddCategoryAsync(CategoryDTO categoryDto)
+        {
+            if(categoryDto == null) {  throw new ArgumentNullException(nameof(categoryDto)); }
+            var category = new Category
+            {
+                Name = categoryDto.Name,
+                Description = categoryDto.Description,
+            };
+        }
         public async Task UpdateCategory(Category category) =>
             await _categoryRepository.UpdateCategory(category);
 

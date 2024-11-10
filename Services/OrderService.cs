@@ -16,10 +16,20 @@ namespace PhoneVault.Services
         public async Task<Order> GetOrderById(int id) =>
             await _orderRepository.GetOrderById(id);
 
-        public async Task AddOrder(Order order)
+        public async Task AddOrder(OrderDTO orderDto)
         {
-            if(order == null) throw new ArgumentNullException(nameof(order));
-            await _orderRepository.AddOrder(order);
+            if(orderDto == null) throw new ArgumentNullException(nameof(orderDto));
+            var order = new Order
+            {
+                UserId = orderDto.UserId,
+                OrderDate = DateTime.Now,
+                TotalPrice = orderDto.TotalPrice,
+                Status = orderDto.Status,
+                PaymentMethod = orderDto.PaymentMethod,
+                ShippingAddress = orderDto.ShippingAddress,
+            };
+
+        await _orderRepository.AddOrder(order);
         }
         public async Task UpdateOrder(Order order)
         {

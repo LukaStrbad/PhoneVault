@@ -43,7 +43,7 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddPayment(Payment payment)
+        public async Task<ActionResult> AddPayment(PaymentDTO payment)
         {
             if (!(payment == null))
             {

@@ -18,12 +18,17 @@ namespace PhoneVault.Services
         public async Task<ShoppingCart> GetShoppingCartById(int id) =>
             await _shoppingCartRepository.GetShoppingCartById(id);
 
-        public async Task AddShoppingCart(ShoppingCart cart)
+        public async Task AddShoppingCart(ShoppingCartDTO cartDto)
         {
-            if (cart == null)
+            if (cartDto == null)
             {
-                throw new ArgumentNullException(nameof(cart));
+                throw new ArgumentNullException(nameof(cartDto));
             }
+            var cart = new ShoppingCart
+            {
+                UserId = cartDto.UserId,
+                CreatedAt = DateTime.UtcNow,
+            };
             await _shoppingCartRepository.AddShoppingCart(cart);
         }
         public async Task UpdateShoppingCart(ShoppingCart cart)

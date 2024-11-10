@@ -36,7 +36,7 @@ namespace PhoneVault.Controllers
             return Ok(record);
         }
         [HttpPost]
-        public async Task<ActionResult> AddShippingRecord(Shipping record)
+        public async Task<ActionResult> AddShippingRecord(ShippingDTO record)
         {
             if(record == null)
             {

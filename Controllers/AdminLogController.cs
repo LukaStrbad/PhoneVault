@@ -43,7 +43,7 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddAdminLog(AdminLog log)
+        public async Task<ActionResult> AddAdminLog(AdminLogDTO log)
         {
             await _adminlogService.AddAdminLog(log);
             return Ok(log);

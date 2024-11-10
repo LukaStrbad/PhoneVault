@@ -44,8 +44,12 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddCategory(Category category)
+        public async Task<ActionResult> AddCategory(CategoryDTO category)
         {
+            if(category == null)
+            {
+                return BadRequest();
+            }
             await _categoryService.AddCategoryAsync(category);
             return Ok(category);
         }
