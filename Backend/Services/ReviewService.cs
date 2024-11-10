@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using PhoneVault.Data;
+using PhoneVault.Enums;
 using PhoneVault.Models;
 
 namespace PhoneVault.Services;
@@ -73,7 +74,7 @@ public class ReviewService(PhoneVaultContext context)
             throw new Exception("Invalid user id");
         }
 
-        if (review.UserId != idInt && !claimsPrincipal.IsInRole("admin"))
+        if (review.UserId != idInt && !claimsPrincipal.IsInRole(UserTypes.Admin))
         {
             throw new Exception("User is not the owner of the review");
         }
@@ -96,7 +97,7 @@ public class ReviewService(PhoneVaultContext context)
             throw new Exception("Invalid user id");
         }
 
-        if (review.UserId != idInt && !claimsPrincipal.IsInRole("admin"))
+        if (review.UserId != idInt && !claimsPrincipal.IsInRole(UserTypes.Admin))
         {
             throw new Exception("User is not the owner of the review");
         }

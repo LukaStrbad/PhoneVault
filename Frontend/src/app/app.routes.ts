@@ -8,6 +8,7 @@ import { AdminComponent } from "./admin/admin.component";
 import { AddProductComponent } from "./admin/add-product/add-product.component";
 import { ProductListComponent } from "./admin/product-list/product-list.component";
 import { ShoppingCartComponent } from "./shopping-cart/shopping-cart.component";
+import { ReviewsComponent } from "./admin/reviews/reviews.component";
 
 export const routes: Routes = [
   {
@@ -45,6 +46,10 @@ export const routes: Routes = [
       {
         path: 'edit-product/:id',
         component: AddProductComponent,
+      },
+      {
+        path: 'reviews/:productId',
+        component: ReviewsComponent,
       }
     ]
   },

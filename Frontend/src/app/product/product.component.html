@@ -1,9 +1,9 @@
 <div class="container mt-4">
-  @if (product === undefined) {
+  @if (!product && notFound) {
     <div class="alert alert-danger" role="alert">
       Product not found!
     </div>
-  } @else {
+  } @else if (product) {
     <div class="row">
       <div class="col-12 col-md-6 bg-primary">
         IMAGE
@@ -41,7 +41,9 @@
           <p>No reviews</p>
         } @else {
           @for (review of reviews; track review) {
-            <app-review-card [review]="review" [editable]="auth.user?.id == review.userId" (onUpdate)="onReviewUpdate(review, $event)" (onDelete)="onReviewDelete(review)"></app-review-card>
+            <app-review-card [review]="review" [editable]="auth.user?.id == review.userId"
+                             (onUpdate)="onReviewUpdate(review, $event)"
+                             (onDelete)="onReviewDelete(review)"></app-review-card>
           }
         }
       </div>

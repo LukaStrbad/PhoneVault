@@ -26,6 +26,7 @@ import { ReviewsService } from "../../services/reviews.service";
 })
 export class ProductComponent {
   product?: Product;
+  notFound = false;
   id: number;
   reviews: Review[] = [];
 
@@ -45,7 +46,7 @@ export class ProductComponent {
   constructor(
     route: ActivatedRoute,
     router: Router,
-    private productService: ProductService,
+    productService: ProductService,
     private reviewsService: ReviewsService,
     private shoppingCart: ShoppingCartService,
     public auth: AuthService
@@ -58,12 +59,13 @@ export class ProductComponent {
     if (!this.product) {
       productService.get(this.id).then(product => {
         this.product = product;
+      }).catch(() => {
+        this.notFound = true;
       });
     }
 
     reviewsService.getReviews(this.id).then(reviews => {
       this.reviews = reviews;
-      console.log(reviews);
     });
 
   }
