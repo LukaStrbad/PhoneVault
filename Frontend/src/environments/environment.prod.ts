@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: process.env["API_URL"] ?? 'http://localhost:5000'
+  apiUrl: "https://phonevault-hpfwfnajb9b4aebt.germanywestcentral-01.azurewebsites.net"
 };
