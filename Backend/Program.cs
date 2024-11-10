@@ -91,8 +91,8 @@ builder.Services.AddAuthorizationBuilder()
 
 
 // Add additional repositories and services as needed
-//builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-//builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 
