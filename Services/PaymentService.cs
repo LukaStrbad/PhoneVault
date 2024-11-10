@@ -16,16 +16,19 @@ namespace PhoneVault.Services
             await _paymentRepository.GetAllPayments();
         public async Task<Payment> GetPaymentById(int id) =>
             await _paymentRepository.GetPaymentById(id);
-        public async Task AddPayment(Payment payment)
+        public async Task AddPayment(PaymentDTO paymentDto)
         {
-            if (!(payment == null))
+            if(paymentDto == null) throw new ArgumentNullException(nameof(paymentDto));
+            var payment = new Payment
             {
-                await _paymentRepository.AddPayment(payment);
-            }
-            else
-            {
-                throw new ArgumentException(nameof(payment));
-            }
+                OrderId = paymentDto.OrderId,
+                PaymentMethod = paymentDto.PaymentMethod,
+                PaymentDate=DateTime.Now,
+                PaymentStatus = paymentDto.PaymentStatus,
+                Amount = paymentDto.Amount,
+                TransactionId = paymentDto.TransactionId,
+            };
+            await _paymentRepository.AddPayment(payment);
         }
         public async Task UpdatePayment(Payment payment)
         {

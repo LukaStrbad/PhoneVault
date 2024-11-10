@@ -36,7 +36,7 @@ namespace PhoneVault.Controllers
             return Ok(cart);
         }
         [HttpPost]
-        public async Task<ActionResult> AddShoppingCart(ShoppingCart cart)
+        public async Task<ActionResult> AddShoppingCart(ShoppingCartDTO cart)
         {
             if (cart == null)
             {

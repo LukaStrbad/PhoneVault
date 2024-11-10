@@ -34,7 +34,7 @@ namespace PhoneVault.Controllers
             return Ok(order);
         }
         [HttpPost]
-        public async Task<ActionResult> AddOrder(Order order)
+        public async Task<ActionResult> AddOrder(OrderDTO order)
         {
             if (order == null)
             {

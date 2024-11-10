@@ -16,11 +16,19 @@ namespace PhoneVault.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string brand = null, [FromQuery] int? categoryId = null)
         {
-            var products = await _productService.GetAllProductsAsync();
+            var products = await _productService.GetAllProductsAsync(brand, categoryId);
             return Ok(products);
         }
+
+
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        //{
+        //    var products = await _productService.GetAllProductsAsync();
+        //    return Ok(products);
+        //}
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -30,10 +38,14 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddProduct(Product product)
+        public async Task<ActionResult> AddProduct([FromBody] ProductDTO productDto)
         {
-            await _productService.AddProductAsync(product);
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            if(productDto == null)
+            {
+                return BadRequest();
+            }
+            await _productService.AddProductAsync(productDto);
+            return Ok(productDto);
         }
 
         [HttpPut("{id}")]

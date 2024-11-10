@@ -12,9 +12,25 @@ namespace PhoneVault.Repositories
         {
             _context = context;
         }
+        public async Task<IEnumerable<Product>> GetAllProducts(string brand = null, int? categoryId = null)
+        {
+            var query = _context.Products.AsQueryable();
 
-        public async Task<IEnumerable<Product>> GetAllProducts() =>
-            await _context.Products.ToListAsync();
+            if (!string.IsNullOrEmpty(brand))
+            {
+                query = query.Where(p => p.Brand == brand);
+            }
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            return await query.ToListAsync();
+        }
+
+        //public async Task<IEnumerable<Product>> GetAllProducts() =>
+        //    await _context.Products.ToListAsync();
 
         public async Task<Product> GetProductById(int id) =>
             await _context.Products.FindAsync(id);

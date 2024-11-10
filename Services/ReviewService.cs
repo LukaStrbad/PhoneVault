@@ -18,8 +18,17 @@ namespace PhoneVault.Services
         public async Task<Review> GetReviewByIdAsync(int id) =>
             await _reviewRepository.GetReviewById(id);
 
-        public async Task AddReviewAsync(Review review) =>
-            await _reviewRepository.AddReview(review);
+        public async Task AddReviewAsync(ReviewDTO reviewDto)
+        {
+            if(reviewDto == null) throw new ArgumentNullException(nameof(reviewDto));
+            var review = new Review
+            {
+                UserId = reviewDto.UserId,
+                ProductId = reviewDto.ProductId,
+                Rating = reviewDto.Rating,
+                Comment = reviewDto.Comment,
+            };
+    }
 
         public async Task UpdateReviewAsync(Review review) =>
             await _reviewRepository.UpdateReview(review);

@@ -33,10 +33,10 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddReview(Review review)
+        public async Task<ActionResult> AddReview(ReviewDTO review)
         {
             await _reviewService.AddReviewAsync(review);
-            return CreatedAtAction(nameof(GetReview), new { id = review.Id }, review);
+            return Ok(review);
         }
 
         [HttpPut("{id}")]
