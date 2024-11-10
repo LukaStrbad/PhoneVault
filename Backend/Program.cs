@@ -114,6 +114,8 @@ app.UseCors(policyBuilder => policyBuilder
 );
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
