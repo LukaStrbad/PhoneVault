@@ -23,7 +23,7 @@ namespace PhoneVault.Services
             }
             var item = new ShoppingCartItem
             {
-                CartId = shoppingCartItemDTO.CartId,
+                ShoppingCartId = shoppingCartItemDTO.CartId,
                 ProductId = shoppingCartItemDTO.ProductId,
                 Quantity = shoppingCartItemDTO.Quantity,
             };

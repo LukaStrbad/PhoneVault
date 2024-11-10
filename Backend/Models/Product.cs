@@ -14,6 +14,7 @@ namespace PhoneVault.Models
         public int QuantityInStock  { get; set; }
         public DateTime? CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; } = DateTime.Now;
+        public int CategoryId { get; set; }
 
         public Category? Category { get; set; }
         public ICollection<Review> Reviews { get; set; } = [];

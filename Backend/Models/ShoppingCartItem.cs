@@ -8,6 +8,7 @@ namespace PhoneVault.Models
         public int Quantity { get; set; }
 
         // Relationships
+        public int ShoppingCartId { get; set; }
         [JsonIgnore] public ShoppingCart? ShoppingCart { get; set; }
         [JsonIgnore] public Product? Product { get; set; }
         public int ProductId { get; set; }

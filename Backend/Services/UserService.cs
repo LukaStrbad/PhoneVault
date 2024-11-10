@@ -27,6 +27,9 @@ namespace PhoneVault.Services
                 UserType = userDTO.UserType,
                 UpdatedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
+                Orders = [],
+                ShoppingCart = new(),
+                Reviews = [],
             };
             await _userRepository.UpdateUser(user);
         }

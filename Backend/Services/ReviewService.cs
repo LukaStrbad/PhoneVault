@@ -20,7 +20,7 @@ namespace PhoneVault.Services
 
         public async Task AddReviewAsync(ReviewDTO reviewDto)
         {
-            if(reviewDto == null) throw new ArgumentNullException(nameof(reviewDto));
+            if (reviewDto == null) throw new ArgumentNullException(nameof(reviewDto));
             var review = new Review
             {
                 UserId = reviewDto.UserId,
@@ -28,7 +28,7 @@ namespace PhoneVault.Services
                 Rating = reviewDto.Rating,
                 Comment = reviewDto.Comment,
             };
-    }
+        }
 
         public async Task UpdateReviewAsync(Review review) =>
             await _reviewRepository.UpdateReview(review);

@@ -20,9 +20,9 @@ namespace PhoneVault.Models
         public DateTime? CreatedAt { get; set; }= DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }= DateTime.UtcNow;
 
-        //public required ICollection<Order> Orders { get; set; }
-        //public required ShoppingCart ShoppingCart { get; set; }
-        //public required ICollection<Review> Reviews { get; set; }
+        public required ICollection<Order> Orders { get; set; }
+        public required ShoppingCart ShoppingCart { get; set; }
+        public required ICollection<Review> Reviews { get; set; }
 
     }
 }
