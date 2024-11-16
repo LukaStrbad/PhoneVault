@@ -5,6 +5,8 @@ import { NgClass } from "@angular/common";
 import { ToastComponent } from "../../components/toast/toast.component";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Product, ProductRequest } from "../../../model/product";
+import { CategoryService } from "../../../services/category.service";
+import { Category } from "../../../model/category";
 
 @Component({
   selector: 'app-add-product',
@@ -23,50 +25,66 @@ export class AddProductComponent {
     brand: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
     specification: new FormControl('', Validators.required),
+    category: new FormControl<number>(0, Validators.min(1)),
     netPrice: new FormControl('', Validators.required),
     sellPrice: new FormControl('', Validators.required),
     quantityInStock: new FormControl('', Validators.required),
-  })
+  });
 
   componentType = ComponentType.Add;
   productId: number | null = null;
+  categories: Category[] = [];
 
   @ViewChild('toast') private toastComponent!: ToastComponent;
 
   constructor(
     private productService: ProductService,
+    private categoryService: CategoryService,
     route: ActivatedRoute,
-    router: Router
+    private router: Router
   ) {
     // Check edit mode
     if (router.url.includes('edit-product')) {
       this.componentType = ComponentType.Edit;
     }
 
+    const categoryPromise = this.categoryService.getAll().then(categories => {
+      this.categories = categories;
+    });
+
     const idStr = route.snapshot.paramMap.get('id');
     if (!idStr) {
       return;
     }
-    this.productId = Number(idStr);
-    const state = router.getCurrentNavigation()?.extras.state;
 
-    let product: Product = state?.["product"];
+    categoryPromise.then(() => {
+      this.productId = Number(idStr);
+      const state = router.getCurrentNavigation()?.extras.state;
 
-    if (product) {
-      this.updateProductForm(product);
-    } else {
-      productService.get(this.productId).then(p => {
-        this.updateProductForm(p);
-      });
-    }
+      let product: Product = state?.["product"];
+
+      if (product) {
+        this.updateProductForm(product);
+      } else {
+        productService.get(this.productId).then(p => {
+          this.updateProductForm(p);
+        });
+      }
+    });
   }
 
   updateProductForm(product: Product) {
+    const category = this.categories.find(c => c.id === product.categoryId);
+    if (!category) {
+      console.error("Category not found");
+      return;
+    }
     this.productForm.setValue({
       name: product.name,
       brand: product.brand,
       description: product.description,
       specification: product.specification,
+      category: category.id,
       netPrice: product.netPrice.toString(),
       sellPrice: product.sellPrice.toString(),
       quantityInStock: product.quantityInStock.toString()
@@ -75,8 +93,8 @@ export class AddProductComponent {
 
   async onSubmit() {
     const value = this.productForm.value;
-    if (!value.name || !value.brand || !value.description || !value.specification || !value.netPrice
-      || !value.sellPrice || !value.quantityInStock) {
+    if (!value.name || !value.brand || !value.description || !value.specification || !value.category ||
+      !value.netPrice || !value.sellPrice || !value.quantityInStock) {
       return;
     }
 
@@ -85,6 +103,7 @@ export class AddProductComponent {
       brand: value.brand,
       description: value.description,
       specification: value.specification,
+      categoryId: value.category,
       netPrice: Number(value.netPrice),
       sellPrice: Number(value.sellPrice),
       quantityInStock: Number(value.quantityInStock)
@@ -127,6 +146,28 @@ export class AddProductComponent {
     } catch (e) {
       // Show toast
       this.toastComponent.show("Error", "Failed to update product");
+      console.error(e);
+    }
+  }
+
+  async onDelete(event: MouseEvent) {
+    event.preventDefault();
+
+    if (!this.productId) {
+      this.toastComponent.show("Error", "Invalid product id");
+      return;
+    }
+
+    try {
+      // Delete product from database
+      await this.productService.delete(this.productId);
+
+      // Show toast
+      this.toastComponent.show("Success", "Product deleted successfully");
+      await this.router.navigate(['/admin/product-list']);
+    } catch (e) {
+      // Show toast
+      this.toastComponent.show("Error", "Failed to delete product");
       console.error(e);
     }
   }

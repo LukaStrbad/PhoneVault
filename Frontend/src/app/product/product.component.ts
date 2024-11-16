@@ -6,6 +6,10 @@ import { DatePipe, NgClass } from "@angular/common";
 import { Review } from "../../model/review";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { StarRatingComponent } from "../components/star-rating/star-rating.component";
+import { ShoppingCartService } from "../../services/shopping-cart.service";
+import { ReviewCardComponent } from "../components/review-card/review-card.component";
+import { AuthService } from "../../services/auth.service";
+import { ReviewsService } from "../../services/reviews.service";
 
 @Component({
   selector: 'app-product',
@@ -14,13 +18,15 @@ import { StarRatingComponent } from "../components/star-rating/star-rating.compo
     NgClass,
     ReactiveFormsModule,
     StarRatingComponent,
-    DatePipe
+    DatePipe,
+    ReviewCardComponent
   ],
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss'
 })
 export class ProductComponent {
   product?: Product;
+  notFound = false;
   id: number;
   reviews: Review[] = [];
 
@@ -40,7 +46,10 @@ export class ProductComponent {
   constructor(
     route: ActivatedRoute,
     router: Router,
-    private productService: ProductService
+    productService: ProductService,
+    private reviewsService: ReviewsService,
+    private shoppingCart: ShoppingCartService,
+    public auth: AuthService
   ) {
     this.id = Number(route.snapshot.paramMap.get('id'));
     const state = router.getCurrentNavigation()?.extras.state;
@@ -50,10 +59,12 @@ export class ProductComponent {
     if (!this.product) {
       productService.get(this.id).then(product => {
         this.product = product;
+      }).catch(() => {
+        this.notFound = true;
       });
     }
 
-    productService.getReviews(this.id).then(reviews => {
+    reviewsService.getReviews(this.id).then(reviews => {
       this.reviews = reviews;
     });
 
@@ -65,8 +76,38 @@ export class ProductComponent {
       return;
     }
 
-    await this.productService.addReview(this.id, value.rating, value.comment);
+    await this.reviewsService.addReview(this.id, value.rating, value.comment);
     this.commentForm.reset();
-    this.reviews = await this.productService.getReviews(this.id);
+    this.reviews = await this.reviewsService.getReviews(this.id);
+  }
+
+  async addToCart() {
+    if (!this.product) {
+      return
+    }
+    await this.shoppingCart.addToCart(this.product);
+  }
+
+  async removeFromCart() {
+    if (!this.product) {
+      return
+    }
+    await this.shoppingCart.removeFromCart(this.product.id);
+  }
+
+  showAddToCartButton() {
+    if (!this.product) {
+      return false;
+    }
+    return !this.shoppingCart.isProductInCart(this.product.id);
+  }
+
+  async onReviewUpdate(review: Review, [comment, rating]: [string, number]) {
+    await this.reviewsService.updateReview(review.id, rating, comment);
+  }
+
+  async onReviewDelete(review: Review) {
+    await this.reviewsService.deleteReview(review.id);
+    this.reviews = await this.reviewsService.getReviews(this.id);
   }
 }

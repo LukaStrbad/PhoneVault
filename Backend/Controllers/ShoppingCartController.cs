@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PhoneVault.Controllers;
 using PhoneVault.Models;
 using PhoneVault.Services;
 
@@ -32,7 +31,7 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddShoppingCart(ShoppingCartDTO cart)
+        public async Task<ActionResult> AddShoppingCart()
         {
             await _shoppingCartService.AddShoppingCart(User);
             return Ok();

@@ -55,8 +55,9 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task <ActionResult> UpdateCategory(Category category)
+        public async Task <ActionResult> UpdateCategory(int id, Category category)
         {
+            category.Id = id;
             await _categoryService.UpdateCategory(category);
             return Ok(category);
         }

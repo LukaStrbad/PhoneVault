@@ -23,11 +23,11 @@ export class ShoppingCartService {
     if (isPlatformBrowser(platformId)) {
       const localCart = this.getLocalCart();
       this.cart.set(localCart);
-    }
 
-    effect(() => {
-      localStorage.setItem('cartItems', JSON.stringify(this.cart()));
-    });
+      effect(() => {
+        localStorage.setItem('cartItems', JSON.stringify(this.cart()));
+      });
+    }
 
     let wasLoggedIn = false;
     effect(() => {

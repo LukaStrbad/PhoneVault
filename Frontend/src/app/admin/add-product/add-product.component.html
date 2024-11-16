@@ -20,7 +20,8 @@
 
   <div class="mb-3">
     <label for="descInput" class="form-label">Description</label>
-    <input type="text" class="form-control" id="descInput" placeholder="Enter description" formControlName="description">
+    <input type="text" class="form-control" id="descInput" placeholder="Enter description"
+           formControlName="description">
     <div class="text-danger mt-1"
          [ngClass]="{'d-none': productForm.controls.description.untouched || productForm.controls.description.valid}">
       Please provide a description.
@@ -30,11 +31,21 @@
   <div class="mb-3">
     <label for="specificationInput" class="form-label">Specification</label>
     <textarea type="text" class="form-control" id="specificationInput" placeholder="Enter specification"
-           formControlName="specification" rows="5" ></textarea>
+              formControlName="specification" rows="5"></textarea>
     <div class="text-danger mt-1"
          [ngClass]="{'d-none': productForm.controls.specification.untouched || productForm.controls.specification.valid}">
       Please provide a specification.
     </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="categorySelect" class="form-label">Category</label>
+    <select class="form-select" id="categorySelect" formControlName="category">
+      <option value="0" selected>Select category</option>
+      @for (category of categories; track category.id) {
+        <option [value]="category.id">{{ category.name }}</option>
+      }
+    </select>
   </div>
 
   <div class="mb-3">
@@ -67,13 +78,19 @@
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary" [disabled]="!productForm.valid">
-    @if (componentType == ComponentType.Add) {
-      Add product
-    } @else {
-      Update product
+  <div class="d-flex flex-column gap-2 align-items-start">
+    <button type="submit" class="btn btn-primary" [disabled]="!productForm.valid">
+      @if (componentType == ComponentType.Add) {
+        Add product
+      } @else {
+        Update product
+      }
+    </button>
+
+    @if (componentType == ComponentType.Edit) {
+      <button class="btn btn-danger" (click)="onDelete($event)">Delete</button>
     }
-  </button>
+  </div>
 
   <app-toast #toast></app-toast>
 

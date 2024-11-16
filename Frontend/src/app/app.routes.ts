@@ -8,6 +8,9 @@ import { AdminComponent } from "./admin/admin.component";
 import { AddProductComponent } from "./admin/add-product/add-product.component";
 import { ProductListComponent } from "./admin/product-list/product-list.component";
 import { ShoppingCartComponent } from "./shopping-cart/shopping-cart.component";
+import { ReviewsComponent } from "./admin/reviews/reviews.component";
+import { CategoryListComponent } from "./admin/category-list/category-list.component";
+import { AddCategoryComponent } from "./admin/add-category/add-category.component";
 
 export const routes: Routes = [
   {
@@ -35,6 +38,18 @@ export const routes: Routes = [
     component: AdminComponent,
     children: [
       {
+        path: 'category-list',
+        component: CategoryListComponent
+      },
+      {
+        path: 'add-category',
+        component: AddCategoryComponent
+      },
+      {
+        path: 'edit-category/:id',
+        component: AddCategoryComponent
+      },
+      {
         path: 'product-list',
         component: ProductListComponent,
       },
@@ -45,6 +60,10 @@ export const routes: Routes = [
       {
         path: 'edit-product/:id',
         component: AddProductComponent,
+      },
+      {
+        path: 'reviews/:productId',
+        component: ReviewsComponent,
       }
     ]
   },

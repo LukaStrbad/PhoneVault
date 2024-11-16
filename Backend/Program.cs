@@ -15,9 +15,9 @@ builder.Services.AddControllers();
 
 // Configure SQL Server and EF Core
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<PhoneVaultContext>(options =>
-    options.UseSqlServer(connectionString));
-
+ builder.Services.AddDbContext<PhoneVaultContext>(options =>
+     options.UseSqlServer(connectionString));
+ 
 /*builder.Services.AddDbContext<PhoneVaultContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );*/
@@ -95,6 +95,10 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
+
+// Get the database context and apply migrations
+// using var context = app.Services.GetRequiredService<PhoneVaultContext>();
+// context.Database.Migrate();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

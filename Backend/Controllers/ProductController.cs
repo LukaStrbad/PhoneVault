@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PhoneVault.Models;
 using PhoneVault.Services;
@@ -17,19 +17,11 @@ namespace PhoneVault.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string brand = null, [FromQuery] int? categoryId = null)
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            var products = await _productService.GetAllProductsAsync(brand, categoryId);
+            var products = await _productService.GetAllProductsAsync();
             return Ok(products);
         }
-
-
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-        //{
-        //    var products = await _productService.GetAllProductsAsync();
-        //    return Ok(products);
-        //}
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -39,14 +31,10 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddProduct([FromBody] ProductDTO productDto)
+        public async Task<ActionResult> AddProduct(Product product)
         {
-            if(productDto == null)
-            {
-                return BadRequest();
-            }
-            await _productService.AddProductAsync(productDto);
-            return Ok(productDto);
+            await _productService.AddProductAsync(product);
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
         [HttpPut("{id}")]
@@ -62,21 +50,6 @@ namespace PhoneVault.Controllers
         {
             await _productService.DeleteProductAsync(id);
             return NoContent();
-        }
-        
-        [HttpGet("{id}/reviews")]
-        public async Task<ActionResult<IEnumerable<ReviewResponse>>> GetReviews(int id)
-        {
-            var reviews = await _productService.GetReviewsByProductIdAsync(id);
-            return Ok(reviews);
-        }
-        
-        [HttpPost("{id}/reviews")]
-        [Authorize("user")]
-        public async Task<ActionResult> AddReview(int id, [FromBody] ReviewRequest review)
-        {
-            await _productService.AddReviewToProductAsync(id, review.Rating, review.Comment, User);
-            return CreatedAtAction(nameof(GetReviews), new { id }, review);
         }
     }
 

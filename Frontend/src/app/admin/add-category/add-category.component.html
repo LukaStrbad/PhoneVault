@@ -1,0 +1,38 @@
+<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="container my-4">
+
+  <div class="mb-3">
+    <label for="nameInput" class="form-label">Name</label>
+    <input type="text" class="form-control" id="nameInput" placeholder="Enter name" formControlName="name">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': categoryForm.controls.name.untouched || categoryForm.controls.name.valid}">
+      Please provide a name.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="descInput" class="form-label">Description</label>
+    <input type="text" class="form-control" id="descInput" placeholder="Enter description"
+           formControlName="description">
+    <div class="text-danger mt-1"
+         [ngClass]="{'d-none': categoryForm.controls.description.untouched || categoryForm.controls.description.valid}">
+      Please provide a description.
+    </div>
+  </div>
+
+  <div class="d-flex flex-column gap-2 align-items-start">
+    <button type="submit" class="btn btn-primary">
+      @if (componentType == ComponentType.Add) {
+        Add product
+      } @else {
+        Update product
+      }
+    </button>
+
+    @if (componentType == ComponentType.Edit) {
+      <button class="btn btn-danger" (click)="onDelete($event)">Delete</button>
+    }
+  </div>
+
+  <app-toast #toast></app-toast>
+
+</form>

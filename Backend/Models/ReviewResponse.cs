@@ -13,5 +13,7 @@ public class ReviewResponse
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; }
     [JsonPropertyName("userName")]
-    public string? UserName { get; set; }
+    public string UserName { get; set; }
+    [JsonPropertyName("userId")]
+    public int UserId { get; set; }
 }

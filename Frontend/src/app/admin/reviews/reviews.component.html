@@ -1,0 +1,19 @@
+<div class="container">
+  @if (!product || !reviews) {
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } @else {
+    <h2 class="mt-4">{{ product?.name }} reviews</h2>
+    <div class="row">
+      @for (review of reviews; track review.id) {
+        <div class="col-12 col-md-6 mt-4">
+          <app-review-card [review]="review" [editable]="true" (onDelete)="onDelete(review)"
+                           (onUpdate)="onUpdate(review, $event)"></app-review-card>
+        </div>
+      }
+    </div>
+  }
+</div>

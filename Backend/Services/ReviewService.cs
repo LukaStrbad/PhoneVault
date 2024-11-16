@@ -1,39 +1,109 @@
-﻿using PhoneVault.Models;
-using PhoneVault.Repositories;
+﻿using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using PhoneVault.Data;
+using PhoneVault.Enums;
+using PhoneVault.Models;
 
-namespace PhoneVault.Services
+namespace PhoneVault.Services;
+
+public class ReviewService(PhoneVaultContext context)
 {
-    public class ReviewService
+    public async Task<IEnumerable<ReviewResponse>> GetReviews(int productId)
     {
-        private readonly IReviewRepository _reviewRepository;
-
-        public ReviewService(IReviewRepository reviewRepository)
+        var product = await context.Products
+            .Include(p => p.Reviews).ThenInclude(review => review.User)
+            .FirstOrDefaultAsync(p => p.Id == productId);
+        if (product == null)
         {
-            _reviewRepository = reviewRepository;
+            throw new Exception("Product not found");
         }
 
-        public async Task<IEnumerable<Review>> GetAllReviewsAsync() =>
-            await _reviewRepository.GetAllReviews();
-
-        public async Task<Review> GetReviewByIdAsync(int id) =>
-            await _reviewRepository.GetReviewById(id);
-
-        public async Task AddReviewAsync(ReviewDTO reviewDto)
+        return product.Reviews.Select(r => new ReviewResponse
         {
-            if (reviewDto == null) throw new ArgumentNullException(nameof(reviewDto));
-            var review = new Review
-            {
-                UserId = reviewDto.UserId,
-                ProductId = reviewDto.ProductId,
-                Rating = reviewDto.Rating,
-                Comment = reviewDto.Comment,
-            };
+            Id = r.Id,
+            Rating = r.Rating,
+            Comment = r.Comment,
+            CreatedAt = r.CreatedAt,
+            UserName = r.User?.Name ?? "",
+            UserId = r.UserId
+        });
+    }
+
+    public async Task AddReviewAsync(int productId, int rating, string comment, ClaimsPrincipal claimsPrincipal)
+    {
+        var userId = claimsPrincipal.FindFirstValue("id");
+        if (!int.TryParse(userId, out var idInt))
+        {
+            throw new Exception("Invalid user id");
         }
 
-        public async Task UpdateReviewAsync(Review review) =>
-            await _reviewRepository.UpdateReview(review);
+        var user = await context.Users.FindAsync(idInt);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
 
-        public async Task DeleteReviewAsync(int id) =>
-            await _reviewRepository.DeleteReview(id);
+        var review = new Review
+        {
+            Rating = rating,
+            Comment = comment,
+            User = user
+        };
+
+        var product = await context.Products.FindAsync(productId);
+        if (product == null)
+        {
+            throw new Exception("Product not found");
+        }
+
+        product.Reviews.Add(review);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task DeleteReviewAsync(int id, ClaimsPrincipal claimsPrincipal)
+    {
+        var review = await context.Reviews.FindAsync(id);
+        if (review == null)
+        {
+            throw new Exception("Review not found");
+        }
+
+        var userId = claimsPrincipal.FindFirstValue("id");
+        if (!int.TryParse(userId, out var idInt))
+        {
+            throw new Exception("Invalid user id");
+        }
+
+        if (review.UserId != idInt && !claimsPrincipal.IsInRole(UserTypes.Admin))
+        {
+            throw new Exception("User is not the owner of the review");
+        }
+
+        context.Reviews.Remove(review);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateReviewAsync(int id, int rating, string comment, ClaimsPrincipal claimsPrincipal)
+    {
+        var review = await context.Reviews.FindAsync(id);
+        if (review == null)
+        {
+            throw new Exception("Review not found");
+        }
+
+        var userId = claimsPrincipal.FindFirstValue("id");
+        if (!int.TryParse(userId, out var idInt))
+        {
+            throw new Exception("Invalid user id");
+        }
+
+        if (review.UserId != idInt && !claimsPrincipal.IsInRole(UserTypes.Admin))
+        {
+            throw new Exception("User is not the owner of the review");
+        }
+
+        review.Rating = rating;
+        review.Comment = comment;
+        await context.SaveChangesAsync();
     }
 }
