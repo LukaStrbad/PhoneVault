@@ -16,6 +16,13 @@ namespace PhoneVault.Repositories
         public async Task<IEnumerable<Product>> GetAllProducts() =>
             await _context.Products.ToListAsync();
 
+        public async Task<IEnumerable<Product>> GetAllProducts(string? brand = null, int? categoryId = null)
+        {
+            return await _context.Products
+                .Where(p => (brand == null || p.Brand == brand) && (!categoryId.HasValue || p.CategoryId == categoryId))
+                .ToListAsync();
+        }
+
         public async Task<Product?> GetProductById(int id) =>
             await _context.Products.FindAsync(id);
 

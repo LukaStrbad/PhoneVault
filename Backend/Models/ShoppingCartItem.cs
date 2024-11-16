@@ -11,6 +11,7 @@ namespace PhoneVault.Models
         // Relationships
         [JsonIgnore] public ShoppingCart? ShoppingCart { get; set; }
         [JsonIgnore] public Product? Product { get; set; }
+        public int ShoppingCartId { get; set; }
         public int ProductId { get; set; }
     }
 }

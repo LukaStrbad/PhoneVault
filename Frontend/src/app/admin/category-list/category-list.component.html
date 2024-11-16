@@ -1,0 +1,35 @@
+<div class="container">
+  <a routerLink="/admin/add-category">
+    <button class="btn btn-primary mt-3">Add</button>
+  </a>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th><!-- ACTIONS --></th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @for (category of categories; track category.id) {
+          <tr>
+            <td>{{ category.id }}</td>
+            <td>{{ category.name }}</td>
+            <td>{{ category.description }}</td>
+            <td>
+              <div class="d-flex gap-2">
+                <a [routerLink]="['/admin/edit-category', category.id]" [state]="{category}">
+                  <button class="btn btn-outline-danger">Edit</button>
+                </a>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

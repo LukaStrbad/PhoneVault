@@ -24,6 +24,7 @@ namespace PhoneVault.Services
                 Name = categoryDto.Name,
                 Description = categoryDto.Description,
             };
+            await _categoryRepository.AddCategory(category);
         }
         public async Task UpdateCategory(Category category) =>
             await _categoryRepository.UpdateCategory(category);
