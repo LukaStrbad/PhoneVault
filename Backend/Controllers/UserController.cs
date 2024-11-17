@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PhoneVault.Models;
 using PhoneVault.Services;
 
 namespace PhoneVault.Controllers
 {
+    [Authorize("admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -61,6 +63,19 @@ namespace PhoneVault.Controllers
                 return BadRequest();
             }
             await _userService.DeleteUser(id);
+            return Ok();
+        }
+
+        [HttpPost("{userId:int}")]
+        public async Task<ActionResult> UpdateUser(int userId, [FromBody] bool isAdmin)
+        {
+            var user = await _userService.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            await _userService.UpdateUser(user, isAdmin);
             return Ok();
         }
     }
