@@ -1,4 +1,5 @@
-﻿using PhoneVault.Models;
+﻿using PhoneVault.Enums;
+using PhoneVault.Models;
 using PhoneVault.Repositories;
 
 namespace PhoneVault.Services
@@ -39,6 +40,12 @@ namespace PhoneVault.Services
             {
                 throw new ArgumentNullException(nameof(user));
             }
+            await _userRepository.UpdateUser(user);
+        }
+
+        public async Task UpdateUser(User user, bool isAdmin)
+        {
+            user.UserType = isAdmin ? UserTypes.Admin : UserTypes.Customer;
             await _userRepository.UpdateUser(user);
         }
         public async Task DeleteUser(int id)

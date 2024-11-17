@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PhoneVault.Models
 {
@@ -20,9 +21,11 @@ namespace PhoneVault.Models
         public DateTime? CreatedAt { get; set; }= DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }= DateTime.UtcNow;
 
-        public required ICollection<Order> Orders { get; set; }
-        public required ShoppingCart ShoppingCart { get; set; }
-        public required ICollection<Review> Reviews { get; set; }
+        [JsonIgnore] public ICollection<Order> Orders { get; set; } = [];
+        [JsonIgnore]
+        public ShoppingCart? ShoppingCart { get; set; }
+
+        [JsonIgnore] public ICollection<Review> Reviews { get; set; } = [];
 
     }
 }
