@@ -9,14 +9,14 @@ namespace PhoneVault.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService, IConfiguration configuration) : ControllerBase
 {
     /// <summary>
     /// Gets the cookie options for the refresh token.
     /// </summary>
-    private static readonly CookieOptions HttpOnlyCookieOptions = new()
+    private readonly CookieOptions _httpOnlyCookieOptions = new()
     {
-        Domain = "localhost",
+        Domain = configuration["HttpCookie:Domain"] ?? "localhost",
         SameSite = SameSiteMode.Strict,
         IsEssential = true,
         HttpOnly = true,
@@ -104,8 +104,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
     private void AddRefreshTokenCookie(Tokens tokens)
     {
-        var options = HttpOnlyCookieOptions;
-        options.Expires = tokens.RefreshToken.ExpiryTime;
-        HttpContext.Response.Cookies.Append("refreshToken", tokens.RefreshToken.Token, HttpOnlyCookieOptions);
+        _httpOnlyCookieOptions.Expires = tokens.RefreshToken.ExpiryTime;
+        HttpContext.Response.Cookies.Append("refreshToken", tokens.RefreshToken.Token, _httpOnlyCookieOptions);
     }
 }
