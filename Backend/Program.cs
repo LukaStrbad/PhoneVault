@@ -14,13 +14,30 @@ using PhoneVault.Repositories;
 using PhoneVault.Services;
 
 const string firebaseProjectId = "phone-vault-2438d";
-FirebaseApp.Create(new AppOptions
-{
-    Credential = GoogleCredential.GetApplicationDefault(),
-    ProjectId = firebaseProjectId
-});
 
 var builder = WebApplication.CreateBuilder(args);
+
+string? firebaseJson = null;
+var firebaseEnvVar = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
+var firebaseConfig = builder.Configuration["Firebase:Credentials"];
+if (firebaseEnvVar is not null)
+{
+    firebaseJson = File.ReadAllText(firebaseEnvVar);
+}
+else if(firebaseConfig is not null)
+{
+    firebaseJson = firebaseConfig;
+}
+if (firebaseJson is null)
+{
+    throw new ArgumentException("Firebase credentials are missing");
+}
+
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.FromJson(firebaseJson),
+    ProjectId = firebaseProjectId
+});
 
 // Add services to the container.
 builder.Services.AddControllers();
