@@ -13,7 +13,7 @@ namespace PhoneVault.Services
         }
         public async Task<IEnumerable<User>> GetAllUsers() =>
             await _userRepository.GetAllUsers();
-        public async Task<User> GetUserById(int id) =>
+        public async Task<User> GetUserById(string id) =>
             await _userRepository.GetUserById(id);
         public async Task AddUser(UserDTO userDTO)
         {
@@ -48,9 +48,8 @@ namespace PhoneVault.Services
             user.UserType = isAdmin ? UserTypes.Admin : UserTypes.Customer;
             await _userRepository.UpdateUser(user);
         }
-        public async Task DeleteUser(int id)
+        public async Task DeleteUser(string id)
         {
-            if(id == 0) throw new ArgumentNullException("id");
             await _userRepository.DeleteUser(id);
         }
     }

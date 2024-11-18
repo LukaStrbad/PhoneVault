@@ -1,10 +1,11 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID, Signal, signal, WritableSignal } from '@angular/core';
 import { environment } from "../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { User } from "../model/user";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { firstValueFrom } from "rxjs";
-import { ShoppingCartService } from "./shopping-cart.service";
+import { GoogleAuthProvider, getAuth, signInWithPopup, onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth";
+import { isPlatformBrowser } from "@angular/common";
 
 const url = `${environment.apiUrl}/auth`;
 
@@ -19,7 +20,7 @@ export class AuthService {
   /**
    * The authentication token, or null if no user is logged in.
    */
-  private token: DecodedToken | null = null;
+  private token: DecodedTokenBase | null = null;
   private _isUserLoggedIn: WritableSignal<boolean> = signal(false);
   public isUserLoggedIn: Signal<boolean> = this._isUserLoggedIn;
 
@@ -42,26 +43,45 @@ export class AuthService {
     }
   }
 
+  get isGoogleUser() {
+    return this.token?.isGoogle === true;
+  }
+
   constructor(
+    @Inject(PLATFORM_ID) platformId: Object,
     private http: HttpClient
   ) {
     const accessToken = this.accessToken;
     if (accessToken) {
-      const decodedToken = this.setUserAndToken(accessToken);
-      console.log(this.user);
+      try {
+        const decodedToken = this.setUserAndToken(accessToken);
 
-      const expired = decodedToken.exp * 1000 < Date.now();
+        const expired = decodedToken.exp * 1000 < Date.now();
 
-      if (expired) {
-        this.refreshTokens().then(() => {
+        if (expired) {
+          this.refreshTokens().then(() => {
+            this._isUserLoggedIn.set(true);
+            console.log("tokens refreshed");
+          }, () => {
+            this.logout();
+          });
+        } else {
           this._isUserLoggedIn.set(true);
-          console.log("tokens refreshed");
-        }, () => {
-          this.logout().then();
-        });
-      } else {
-        this._isUserLoggedIn.set(true);
+        }
+      } catch (e) {
+        // Ignored
       }
+    }
+
+    if (isPlatformBrowser(platformId)) {
+      const auth = getAuth();
+      onAuthStateChanged(auth, async user => {
+        if (user) {
+          console.log(user);
+          await this.setGoogleUserAndToken(user);
+          this._isUserLoggedIn.set(true);
+        }
+      })
     }
   }
 
@@ -79,14 +99,40 @@ export class AuthService {
     }
   }
 
-  private setUser(token: DecodedToken) {
-    const userType = token.role === "Admin" ? "Admin" : "Customer";
-    this.user = {
-      id: parseInt(token.id),
-      name: token.given_name,
-      email: token.email,
-      userType
-    };
+  async setGoogleUserAndToken(user: FirebaseUser) {
+    const accessToken = await user.getIdToken(true);
+    const decodedToken = jwtDecode(accessToken);
+    if ("name" in decodedToken && "user_id" in decodedToken && "email" in decodedToken) {
+      this.token = decodedToken as DecodedGoogleToken;
+      this.token.isGoogle = true;
+      this.setUser(this.token);
+      localStorage.setItem('accessToken', accessToken);
+
+      return this.token;
+    } else {
+      throw new Error(`Invalid access token: ${accessToken}`);
+    }
+  }
+
+  private setUser(token: DecodedTokenBase) {
+    if (token.isGoogle) {
+      let decodedToken = token as DecodedGoogleToken;
+      this.user = {
+        id: decodedToken.user_id,
+        name: decodedToken.name,
+        email: decodedToken.email,
+        userType: "Customer"
+      };
+    } else {
+      let decodedToken = token as DecodedToken;
+      const userType = decodedToken.role === "Admin" ? "Admin" : "Customer";
+      this.user = {
+        id: decodedToken.id,
+        name: decodedToken.given_name,
+        email: decodedToken.email,
+        userType
+      };
+    }
   }
 
   async login(email: string, password: string) {
@@ -111,18 +157,41 @@ export class AuthService {
     );
   }
 
-  async logout() {
+  logout() {
+    if (this.isGoogleUser) {
+      const auth = getAuth();
+      signOut(auth).catch(console.error);
+    }
     this.accessToken = null;
+  }
+
+  async onGoogleLogin() {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    try {
+      const result = await signInWithPopup(auth, provider);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
 }
 
+interface DecodedTokenBase extends JwtPayload {
+  isGoogle?: boolean;
+  exp: number;
+}
 
-interface DecodedToken extends JwtPayload {
+interface DecodedToken extends DecodedTokenBase {
   id: string;
   unique_name: string;
   given_name: string;
   email: string;
   role?: string;
-  exp: number;
+}
+
+interface DecodedGoogleToken extends DecodedTokenBase {
+  name: string;
+  user_id: string;
+  email: string;
 }

@@ -12,8 +12,8 @@ using PhoneVault.Data;
 namespace PhoneVault.Migrations
 {
     [DbContext(typeof(PhoneVaultContext))]
-    [Migration("20241116190502_Changes")]
-    partial class Changes
+    [Migration("20241117221227_NewInitialCreate")]
+    partial class NewInitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,14 +122,11 @@ namespace PhoneVault.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -266,8 +263,9 @@ namespace PhoneVault.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
@@ -323,8 +321,9 @@ namespace PhoneVault.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
@@ -362,11 +361,13 @@ namespace PhoneVault.Migrations
 
             modelBuilder.Entity("PhoneVault.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("AccountType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Address")
                         .HasMaxLength(256)
@@ -435,7 +436,9 @@ namespace PhoneVault.Migrations
                 {
                     b.HasOne("PhoneVault.Models.User", null)
                         .WithMany("Orders")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PhoneVault.Models.OrderItem", b =>
@@ -524,8 +527,7 @@ namespace PhoneVault.Migrations
 
                     b.Navigation("Reviews");
 
-                    b.Navigation("ShoppingCart")
-                        .IsRequired();
+                    b.Navigation("ShoppingCart");
                 });
 #pragma warning restore 612, 618
         }

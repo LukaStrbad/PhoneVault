@@ -31,13 +31,10 @@ public class ReviewService(PhoneVaultContext context)
 
     public async Task AddReviewAsync(int productId, int rating, string comment, ClaimsPrincipal claimsPrincipal)
     {
-        var userId = claimsPrincipal.FindFirstValue("id");
-        if (!int.TryParse(userId, out var idInt))
-        {
-            throw new Exception("Invalid user id");
-        }
+        var userId = claimsPrincipal.FindFirstValue("id")
+                     ?? claimsPrincipal.FindFirstValue("user_id");
 
-        var user = await context.Users.FindAsync(idInt);
+        var user = await context.Users.FindAsync(userId);
         if (user == null)
         {
             throw new Exception("User not found");
@@ -68,13 +65,10 @@ public class ReviewService(PhoneVaultContext context)
             throw new Exception("Review not found");
         }
 
-        var userId = claimsPrincipal.FindFirstValue("id");
-        if (!int.TryParse(userId, out var idInt))
-        {
-            throw new Exception("Invalid user id");
-        }
+        var userId = claimsPrincipal.FindFirstValue("id")
+                     ?? claimsPrincipal.FindFirstValue("user_id");
 
-        if (review.UserId != idInt && !claimsPrincipal.IsInRole(UserTypes.Admin))
+        if (review.UserId != userId && !claimsPrincipal.IsInRole(UserTypes.Admin))
         {
             throw new Exception("User is not the owner of the review");
         }
@@ -91,13 +85,10 @@ public class ReviewService(PhoneVaultContext context)
             throw new Exception("Review not found");
         }
 
-        var userId = claimsPrincipal.FindFirstValue("id");
-        if (!int.TryParse(userId, out var idInt))
-        {
-            throw new Exception("Invalid user id");
-        }
+        var userId = claimsPrincipal.FindFirstValue("id") 
+                     ?? claimsPrincipal.FindFirstValue("user_id");
 
-        if (review.UserId != idInt && !claimsPrincipal.IsInRole(UserTypes.Admin))
+        if (review.UserId != userId && !claimsPrincipal.IsInRole(UserTypes.Admin))
         {
             throw new Exception("User is not the owner of the review");
         }

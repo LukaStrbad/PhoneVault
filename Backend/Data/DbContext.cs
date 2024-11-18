@@ -24,6 +24,10 @@ namespace PhoneVault.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define relationships and constraints here, if needed
+            modelBuilder
+                .Entity<User>()
+                .Property(u => u.AccountType)
+                .HasConversion<string>();
         }
     }
 }

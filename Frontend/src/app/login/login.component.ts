@@ -37,4 +37,8 @@ export class LoginComponent {
     await this.auth.login(value.email, value.password);
     await this.router.navigate(['/']);
   }
+
+  async onGoogleLogin() {
+    await this.auth.onGoogleLogin();
+  }
 }

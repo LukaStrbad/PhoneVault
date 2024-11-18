@@ -31,7 +31,7 @@ export class UserListComponent {
     });
   }
 
-  async promoteAdmin(id: number) {
+  async promoteAdmin(id: string) {
     try {
       await this.userService.update(id, true);
       this.toastComponent.show("Success", "User promoted to admin");

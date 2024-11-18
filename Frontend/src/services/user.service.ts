@@ -35,7 +35,7 @@ export class UserService {
     return user;
   }
 
-  async update(userId: number, isAdmin: boolean) {
+  async update(userId: string, isAdmin: boolean) {
     return await firstValueFrom(this.http.post<User>(`${url}/${userId}`, isAdmin));
   }
 }

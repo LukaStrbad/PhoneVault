@@ -1,5 +1,10 @@
+using System.Security.Claims;
 using System.Text;
+using FirebaseAdmin;
+using FirebaseAdmin.Auth;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PhoneVault.Data;
@@ -8,6 +13,13 @@ using PhoneVault.Models;
 using PhoneVault.Repositories;
 using PhoneVault.Services;
 
+const string firebaseProjectId = "phone-vault-2438d";
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.GetApplicationDefault(),
+    ProjectId = firebaseProjectId
+});
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,9 +27,9 @@ builder.Services.AddControllers();
 
 // Configure SQL Server and EF Core
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
- builder.Services.AddDbContext<PhoneVaultContext>(options =>
-     options.UseSqlServer(connectionString));
- 
+builder.Services.AddDbContext<PhoneVaultContext>(options =>
+    options.UseSqlServer(connectionString));
+
 /*builder.Services.AddDbContext<PhoneVaultContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );*/
@@ -72,22 +84,40 @@ if (string.IsNullOrEmpty(secret))
 
 var privateKey = Encoding.ASCII.GetBytes(secret);
 
-builder.Services.AddAuthentication(x =>
-{
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x =>
-{
-    x.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(x =>
     {
-        IssuerSigningKey = new SymmetricSecurityKey(privateKey),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
+        x.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(privateKey),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    })
+    // Google
+    .AddJwtBearer("Firebase", options =>
+    {
+        options.Authority = $"https://securetoken.google.com/{firebaseProjectId}";
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = $"https://securetoken.google.com/{firebaseProjectId}",
+            ValidateAudience = true,
+            ValidAudience = firebaseProjectId,
+            ValidateLifetime = true
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("admin", p => p.RequireRole(UserTypes.Admin));
+    var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+        JwtBearerDefaults.AuthenticationScheme,
+        "Firebase");
+    defaultAuthorizationPolicyBuilder =
+        defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+    options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
 });
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("admin", p => p.RequireRole(UserTypes.Admin))
-    .AddPolicy("user", p => p.RequireRole(UserTypes.Customer, UserTypes.Admin));
 
 
 // Add additional repositories and services as needed
@@ -122,6 +152,58 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseAuthorization();
+
+// Middleware to add a Google user to database
+app.Use(async (context, next) =>
+{
+    string? userId = null;
+    try
+    {
+        var user = context.User;
+        userId = user.FindFirstValue("user_id");
+    }
+    catch (Exception e)
+    {
+        // Do nothing
+    }
+
+    if (userId is null)
+    {
+        await next.Invoke();
+        return;
+    }
+
+    var db = context.RequestServices.GetRequiredService<PhoneVaultContext>();
+    var existingUser = await db.Users.FindAsync(userId);
+    if (existingUser is not null)
+    {
+        await next.Invoke();
+        return;
+    }
+
+    // Find user on firebase
+    var firebaseUser = await FirebaseAuth.DefaultInstance.GetUserAsync(userId);
+
+    if (firebaseUser is not null)
+    {
+        var newUser = new User
+        {
+            Id = userId,
+            Email = firebaseUser.Email,
+            Name = firebaseUser.DisplayName,
+            UserType = UserTypes.Customer,
+            Password = "",
+            Orders = new List<Order>(),
+            ShoppingCart = new ShoppingCart(),
+            Reviews = new List<Review>(),
+            AccountType = UserAccountType.Firebase
+        };
+        await db.Users.AddAsync(newUser);
+        await db.SaveChangesAsync();
+    }
+
+    await next.Invoke();
+});
 
 app.MapControllers();
 

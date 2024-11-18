@@ -26,7 +26,7 @@ namespace PhoneVault.Controllers
             return Ok(users);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(int id)
+        public async Task<ActionResult<User>> GetUserById(string id)
         {
             var user = await _userService.GetUserById(id);
             if (user == null)
@@ -56,18 +56,14 @@ namespace PhoneVault.Controllers
             return Ok();
         }
         [HttpDelete]
-        public async Task<ActionResult> DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(string id)
         {
-            if(id == 0)
-            {
-                return BadRequest();
-            }
             await _userService.DeleteUser(id);
             return Ok();
         }
 
-        [HttpPost("{userId:int}")]
-        public async Task<ActionResult> UpdateUser(int userId, [FromBody] bool isAdmin)
+        [HttpPost("{userId}")]
+        public async Task<ActionResult> UpdateUser(string userId, [FromBody] bool isAdmin)
         {
             var user = await _userService.GetUserById(userId);
             if (user == null)

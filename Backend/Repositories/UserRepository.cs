@@ -22,12 +22,8 @@ namespace PhoneVault.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteUser(int id)
+        public async Task DeleteUser(string id)
         {
-            if (id == 0) 
-            { 
-                throw new ArgumentNullException(nameof(id));
-            }
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
@@ -39,7 +35,7 @@ namespace PhoneVault.Repositories
 
         public async Task<IEnumerable<User>> GetAllUsers() =>
             await _context.Users.ToListAsync();
-        public async Task<User> GetUserById(int id) =>
+        public async Task<User> GetUserById(string id) =>
             await _context.Users.FindAsync(id);
 
         public async Task UpdateUser(User user)
