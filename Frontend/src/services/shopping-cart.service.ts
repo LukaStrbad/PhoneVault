@@ -97,4 +97,11 @@ export class ShoppingCartService {
       await this.updateCartItems(this.cart());
     }
   }
+
+  async clearCart() {
+    this.cart.set([]);
+    if (this.authService.isUserLoggedIn()) {
+      await this.updateCartItems([]);
+    }
+  }
 }

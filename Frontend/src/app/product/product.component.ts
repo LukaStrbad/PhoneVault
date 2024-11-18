@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { Product } from "../../model/product";
 import { ProductService } from "../../services/product.service";
 import { DatePipe, NgClass } from "@angular/common";
@@ -19,7 +19,8 @@ import { ReviewsService } from "../../services/reviews.service";
     ReactiveFormsModule,
     StarRatingComponent,
     DatePipe,
-    ReviewCardComponent
+    ReviewCardComponent,
+    RouterLink
   ],
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss'
