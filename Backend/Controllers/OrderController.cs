@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PhoneVault.Models;
 using PhoneVault.Services;
 
@@ -6,17 +7,13 @@ namespace PhoneVault.Controllers
 {
     [Route("api/order")]
     [ApiController]
-    public class OrderController: ControllerBase
+    [Authorize]
+    public class OrderController(OrderService orderService) : ControllerBase
     {
-        private readonly OrderService orderService;
-        public OrderController(OrderService orderService)
-        {
-            this.orderService = orderService;
-        }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetAllOrders()
         {
-            var orders = await orderService.GetAllOrders();
+            var orders = await orderService.GetAllOrders(User);
             if (orders == null)
             {
                 return NotFound();
@@ -26,7 +23,7 @@ namespace PhoneVault.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrderById(int id)
         {
-            var order = await orderService.GetOrderById(id);
+            var order = await orderService.GetOrderById(id, User);
             if (order == null)
             {
                 return NotFound();
@@ -40,7 +37,7 @@ namespace PhoneVault.Controllers
             {
                 return BadRequest();
             }
-            await orderService.AddOrder(order);
+            await orderService.AddOrder(order, User);
             return Ok();
         }
         [HttpPut]

@@ -47,24 +47,24 @@ export class ShoppingCartComponent {
     }, 0);
   }
 
-  decreaseQuantity(cartItem: ShoppingCartItemWithIndex) {
+  async decreaseQuantity(cartItem: ShoppingCartItemWithIndex) {
     const newQuantity = cartItem.quantity - 1;
     if (newQuantity > 0) {
-      this.shoppingCart.updateQuantity(cartItem.productId, newQuantity);
+      await this.shoppingCart.updateQuantity(cartItem.productId, newQuantity);
       cartItem.quantity = newQuantity;
     }
   }
 
-  increaseQuantity(cartItem: ShoppingCartItemWithIndex) {
+  async increaseQuantity(cartItem: ShoppingCartItemWithIndex) {
     const newQuantity = cartItem.quantity + 1;
     if (newQuantity <= (this.products[cartItem.index]?.quantityInStock ?? 0)) {
-      this.shoppingCart.updateQuantity(cartItem.productId, newQuantity);
+      await this.shoppingCart.updateQuantity(cartItem.productId, newQuantity);
       cartItem.quantity = newQuantity;
     }
   }
 
-  removeItem(cartItem: ShoppingCartItemWithIndex) {
-    this.shoppingCart.removeFromCart(cartItem.productId);
+  async removeItem(cartItem: ShoppingCartItemWithIndex) {
+    await this.shoppingCart.removeFromCart(cartItem.productId);
     this.refreshProducts();
   }
 

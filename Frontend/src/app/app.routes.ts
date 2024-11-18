@@ -12,6 +12,9 @@ import { ReviewsComponent } from "./admin/reviews/reviews.component";
 import { CategoryListComponent } from "./admin/category-list/category-list.component";
 import { AddCategoryComponent } from "./admin/add-category/add-category.component";
 import { UserListComponent } from "./admin/user-list/user-list.component";
+import { SettingsComponent } from "./settings/settings.component";
+import { CheckoutComponent } from "./checkout/checkout.component";
+import { MyOrdersComponent } from "./my-orders/my-orders.component";
 
 export const routes: Routes = [
   {
@@ -33,6 +36,18 @@ export const routes: Routes = [
   {
     path: 'product/:id',
     component: ProductComponent,
+  },
+  {
+    path: "settings",
+    component: SettingsComponent
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent
+  },
+  {
+    path: 'my-orders',
+    component: MyOrdersComponent
   },
   {
     path: 'admin',

@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="card mt-3">
+    <div class="card-body">
+      <h4 class="card-title">Products</h4>
+      <ul>
+        @for (item of items; track item.productId) {
+          <li><h5>{{ item.quantity }} x {{ productName(item.productId) }} (total: {{ price(item.productId) }}
+            &euro;)</h5></li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="form mt-4">
+    <h3>Checkout form</h3>
+
+    <div class="container-fluid g-0">
+      <div class="row">
+
+        <div class="mb-3 col-12 col-lg-6">
+          <label for="nameInput" class="form-label">Name</label>
+          <input type="text" class="form-control" id="nameInput" placeholder="Enter name" formControlName="name">
+          <div class="text-danger mt-1"
+               [ngClass]="{'d-none': checkoutForm.controls.name.untouched || checkoutForm.controls.name.valid}">
+            Please provide a valid name.
+          </div>
+        </div>
+
+        <div class="mb-3 col-12 col-lg-6">
+          <label for="emailInput" class="form-label">Email</label>
+          <input type="email" class="form-control" id="emailInput" placeholder="Enter email" formControlName="email">
+          <div class="text-danger mt-1"
+               [ngClass]="{'d-none': checkoutForm.controls.email.untouched || checkoutForm.controls.email.valid}">
+            Please provide a valid email.
+          </div>
+        </div>
+
+        <div class="mb-3 col-12 col-lg-6">
+          <label for="addressInput" class="form-label">Address</label>
+          <input type="text" class="form-control" id="addressInput" placeholder="Enter address"
+                 formControlName="address">
+          <div class="text-danger mt-1"
+               [ngClass]="{'d-none': checkoutForm.controls.address.untouched || checkoutForm.controls.address.valid}">
+            Please provide a valid address.
+          </div>
+        </div>
+
+        <div class="mb-3 col-12 col-lg-6">
+          <label for="cardNumberInput" class="form-label">Card number</label>
+          <input type="text" class="form-control" id="cardNumberInput" placeholder="Enter card number"
+                 formControlName="cardNumber">
+          <div class="text-danger mt-1"
+               [ngClass]="{'d-none': checkoutForm.controls.cardNumber.untouched || checkoutForm.controls.cardNumber.valid}">
+            Please provide a valid card number.
+          </div>
+        </div>
+
+        <div class="mb-3 col-12 col-lg-6">
+          <label for="expirationDateInput" class="form-label
+      ">Expiration date</label>
+          <input type="text" class="form-control" id="expirationDateInput" placeholder="Enter expiration date"
+                 formControlName="expiry">
+          <div class="text-danger mt-1"
+               [ngClass]="{'d-none': checkoutForm.controls.expiry.untouched || checkoutForm.controls.expiry.valid}">
+            Please provide a valid expiration date.
+          </div>
+        </div>
+
+        <div class="mb-3 col-12 col-lg-6">
+          <label for="cvvInput" class="form-label">CVV</label>
+          <input type="text" class="form-control" id="cvvInput" placeholder="Enter CVV" formControlName="cvv">
+          <div class="text-danger mt-1"
+               [ngClass]="{'d-none': checkoutForm.controls.cvv.untouched || checkoutForm.controls.cvv.valid}">
+            Please provide a valid CVV.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3" [disabled]="!checkoutForm.valid">Submit</button>
+
+  </form>
+
+  <h2 class="mt-3">Total: {{ totalPrice() }} &euro;</h2>
+</div>
