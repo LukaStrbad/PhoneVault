@@ -20,5 +20,5 @@
   </div>
 
   <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
-
+  <button class="btn btn-secondary" (click)="$event.preventDefault(); onGoogleLogin()">Google Login</button>
 </form>

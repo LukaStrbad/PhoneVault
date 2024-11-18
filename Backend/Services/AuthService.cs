@@ -177,7 +177,7 @@ public class AuthService : IAuthService
         var ci = new ClaimsIdentity();
 
         ci.AddClaims([
-            new Claim("id", user.Id.ToString()),
+            new Claim("id", user.Id),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.GivenName, user.Name),
             new Claim(ClaimTypes.Email, user.Email),

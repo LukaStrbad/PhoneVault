@@ -15,5 +15,5 @@ public class ReviewResponse
     [JsonPropertyName("userName")]
     public string UserName { get; set; }
     [JsonPropertyName("userId")]
-    public int UserId { get; set; }
+    public string UserId { get; set; }
 }

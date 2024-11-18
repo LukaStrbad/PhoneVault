@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PhoneVault.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class NewInitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -109,8 +109,7 @@ namespace PhoneVault.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
@@ -118,7 +117,8 @@ namespace PhoneVault.Migrations
                     Address = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     UserType = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AccountType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -140,7 +140,7 @@ namespace PhoneVault.Migrations
                     QuantityInStock = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -149,7 +149,8 @@ namespace PhoneVault.Migrations
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,23 +159,23 @@ namespace PhoneVault.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(256)", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId1 = table.Column<int>(type: "int", nullable: true)
+                    ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Users_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Orders_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,7 +186,7 @@ namespace PhoneVault.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(256)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -207,7 +208,7 @@ namespace PhoneVault.Migrations
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(256)", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -246,12 +247,6 @@ namespace PhoneVault.Migrations
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -261,7 +256,7 @@ namespace PhoneVault.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    ShoppingCartId = table.Column<int>(type: "int", nullable: true),
+                    ShoppingCartId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -277,7 +272,8 @@ namespace PhoneVault.Migrations
                         name: "FK_ShoppingCartItems_ShoppingCarts_ShoppingCartId",
                         column: x => x.ShoppingCartId,
                         principalTable: "ShoppingCarts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -286,14 +282,9 @@ namespace PhoneVault.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_ProductId",
-                table: "OrderItems",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserId1",
+                name: "IX_Orders_UserId",
                 table: "Orders",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",

@@ -34,14 +34,11 @@ public class ShoppingCartService(PhoneVaultContext context)
 
     private async Task<User> GetUser(ClaimsPrincipal claimsPrincipal)
     {
-        var userId = claimsPrincipal.FindFirstValue("id");
-        if (!int.TryParse(userId, out var idInt))
-        {
-            throw new Exception("Invalid user id");
-        }
+        var userId = claimsPrincipal.FindFirstValue("id")
+                     ?? claimsPrincipal.FindFirstValue("user_id");
 
         var user = await context.Users
-            .Where(u => u.Id == idInt)
+            .Where(u => u.Id == userId)
             .Include(u => u.ShoppingCart).ThenInclude(c => c.ShoppingCartItems)
             .FirstOrDefaultAsync();
 

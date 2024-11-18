@@ -38,7 +38,7 @@ export class ProductService {
   }
 
   async create(product: ProductRequest) {
-    return firstValueFrom(this.http.post<ProductRequest>(url, product));
+    return firstValueFrom(this.http.post<Product>(url, product));
   }
 
   async update(id: number, product: ProductRequest) {
@@ -47,5 +47,13 @@ export class ProductService {
 
   async delete(id: number) {
     return firstValueFrom(this.http.delete<void>(`${url}/${id}`));
+  }
+
+  async getImages(id: number) {
+    return firstValueFrom(this.http.get<string[]>(`${url}/${id}/images`));
+  }
+
+  async updateImages(id: number, images: string[]) {
+    return firstValueFrom(this.http.post<string[]>(`${url}/${id}/images`, images));
   }
 }

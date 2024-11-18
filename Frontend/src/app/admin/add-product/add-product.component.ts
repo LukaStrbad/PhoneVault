@@ -1,5 +1,5 @@
-import { afterNextRender, Component, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { afterNextRender, AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewRef } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ProductService } from "../../../services/product.service";
 import { NgClass } from "@angular/common";
 import { ToastComponent } from "../../components/toast/toast.component";
@@ -7,6 +7,9 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Product, ProductRequest } from "../../../model/product";
 import { CategoryService } from "../../../services/category.service";
 import { Category } from "../../../model/category";
+import { HttpClient } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
+import { ImageBlobService } from "../../../services/image-blob.service";
 
 @Component({
   selector: 'app-add-product',
@@ -14,12 +17,13 @@ import { Category } from "../../../model/category";
   imports: [
     ReactiveFormsModule,
     NgClass,
-    ToastComponent
+    ToastComponent,
+    FormsModule
   ],
   templateUrl: './add-product.component.html',
   styleUrl: './add-product.component.scss'
 })
-export class AddProductComponent {
+export class AddProductComponent implements AfterViewInit {
   productForm = new FormGroup({
     name: new FormControl('', Validators.required),
     brand: new FormControl('', Validators.required),
@@ -34,14 +38,19 @@ export class AddProductComponent {
   componentType = ComponentType.Add;
   productId: number | null = null;
   categories: Category[] = [];
+  imagesUrls: string[] = [];
+  newImageUrl = "";
+  @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
 
   @ViewChild('toast') private toastComponent!: ToastComponent;
+  private uploadFiles: FileList | null = null;
 
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
     route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private imageBlobService: ImageBlobService
   ) {
     // Check edit mode
     if (router.url.includes('edit-product')) {
@@ -70,7 +79,15 @@ export class AddProductComponent {
           this.updateProductForm(p);
         });
       }
+
+      productService.getImages(this.productId).then(imagesUrl => {
+        this.imagesUrls = imagesUrl;
+      });
     });
+  }
+
+  ngAfterViewInit() {
+    this.fileInput.nativeElement.value = "";
   }
 
   updateProductForm(product: Product) {
@@ -119,7 +136,8 @@ export class AddProductComponent {
   async createProduct(product: ProductRequest) {
     try {
       // Add product to database
-      await this.productService.create(product);
+      const addedProduct = await this.productService.create(product);
+      await this.productService.updateImages(addedProduct.id, this.imagesUrls);
 
       // Show toast
       this.toastComponent.show("Success", "Product added successfully");
@@ -140,6 +158,7 @@ export class AddProductComponent {
     try {
       // Update product in database
       await this.productService.update(this.productId, product);
+      await this.productService.updateImages(this.productId, this.imagesUrls);
 
       // Show toast
       this.toastComponent.show("Success", "Product updated successfully");
@@ -173,6 +192,30 @@ export class AddProductComponent {
   }
 
   protected readonly ComponentType = ComponentType;
+
+  async onAddImageUrl() {
+    this.imagesUrls.push(this.newImageUrl);
+    this.newImageUrl = "";
+  }
+
+  onRemoveImage(url: string) {
+    this.imagesUrls = this.imagesUrls.filter(u => u !== url);
+  }
+
+  async onFilesUpload() {
+    const files = this.uploadFiles;
+    if (files && files.length > 0) {
+      const urls = await this.imageBlobService.addImages(files);
+      this.uploadFiles = null;
+      this.fileInput.nativeElement.value = "";
+      this.imagesUrls.push(...urls);
+    }
+  }
+
+  onSelectImages() {
+    this.uploadFiles = this.fileInput.nativeElement.files;
+    console.log(this.uploadFiles);
+  }
 }
 
 enum ComponentType {
