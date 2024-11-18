@@ -10,11 +10,13 @@ namespace PhoneVault.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly PhoneVaultContext _context;
+        private readonly EmailService _emailService;
 
-        public ProductService(IProductRepository productRepository, PhoneVaultContext context)
+        public ProductService(IProductRepository productRepository, PhoneVaultContext context, EmailService emailService)
         {
             _productRepository = productRepository;
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<IEnumerable<Product>> GetAllProductsAsync() =>
@@ -23,8 +25,19 @@ namespace PhoneVault.Services
         public async Task<Product> GetProductByIdAsync(int id) =>
             await _productRepository.GetProductById(id);
 
-        public async Task AddProductAsync(Product product) =>
+        public async Task AddProductAsync(Product product)
+        {
             await _productRepository.AddProduct(product);
+
+            foreach (var emailSettings in _context.EmailSettings.Include(es => es.User))
+            {
+                var user = emailSettings.User;
+                if (user is null)
+                    continue;
+                
+                _emailService.SendNewProductMail(user.Email, product);
+            }
+        }
 
         public async Task UpdateProductAsync(Product product) =>
             await _productRepository.UpdateProduct(product);

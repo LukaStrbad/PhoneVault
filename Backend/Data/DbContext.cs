@@ -20,6 +20,7 @@ namespace PhoneVault.Data
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         public DbSet<Image> ProductImages { get; set; }
         public DbSet<ImageBlob> ImageBlobs { get; set; }
+        public DbSet<EmailSettings> EmailSettings { get; set; }
 
         public PhoneVaultContext(DbContextOptions<PhoneVaultContext> options) : base(options) { }
 

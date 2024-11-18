@@ -1,0 +1,33 @@
+<div class="container">
+
+  @if (authService.isUserLoggedIn()) {
+    <div class="card mt-3">
+      <div class="card-body">
+        <h5 class="card-title">
+          Email Settings
+        </h5>
+        <form [formGroup]="emailSettingsForm" (ngSubmit)="onSubmit()" class="form mt-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="orderCheck" formControlName="order">
+            <label class="form-check-label" for="orderCheck">
+              Send an email when an order is placed
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="newProduct" formControlName="newProduct">
+            <label class="form-check-label" for="newProduct">
+              Send an email when a new product is added
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary mt-3">Update Email Settings</button>
+        </form>
+
+      </div>
+    </div>
+  }
+
+</div>
+
+<app-toast #toast></app-toast>

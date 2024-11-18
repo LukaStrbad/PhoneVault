@@ -11,10 +11,12 @@ namespace PhoneVault.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
+
         public UserController(UserService userService)
         {
             _userService = userService;
         }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
@@ -23,8 +25,10 @@ namespace PhoneVault.Controllers
             {
                 return NotFound();
             }
+
             return Ok(users);
         }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserById(string id)
         {
@@ -33,28 +37,34 @@ namespace PhoneVault.Controllers
             {
                 return NotFound();
             }
+
             return Ok(user);
         }
+
         [HttpPost]
         public async Task<ActionResult> AddUser(UserDTO userDto)
         {
-            if(userDto == null)
+            if (userDto == null)
             {
                 return BadRequest();
             }
+
             await _userService.AddUser(userDto);
             return Ok();
         }
+
         [HttpPut]
-        public async Task<ActionResult> UpdateUser(User user) 
+        public async Task<ActionResult> UpdateUser(User user)
         {
-            if(user == null)
+            if (user == null)
             {
                 return BadRequest();
             }
+
             await _userService.UpdateUser(user);
             return Ok();
         }
+
         [HttpDelete]
         public async Task<ActionResult> DeleteUser(string id)
         {
@@ -70,14 +80,30 @@ namespace PhoneVault.Controllers
             {
                 return NotFound();
             }
-            
+
             await _userService.UpdateUser(user, isAdmin);
+            return Ok();
+        }
+
+        [HttpGet("emailSettings")]
+        public async Task<ActionResult<EmailSettings>> GetEmailSettings()
+        {
+            var emailSettings = await _userService.GetEmailSettings(User);
+            var strings = (from EmailSettings.EmailType emailType in Enum.GetValues(typeof(EmailSettings.EmailType))
+                where emailSettings.ShouldSendEmail(emailType)
+                select emailType.ToString()).ToList();
+
+            return Ok(strings);
+        }
+        
+        [HttpPost("emailSettings")]
+        public async Task<ActionResult> SetEmailSettings(IEnumerable<string> emailTypes)
+        {
+            await _userService.SetEmailSettings(User, emailTypes);
             return Ok();
         }
     }
 }
-
-
 
 
 //[HttpDelete]
@@ -90,4 +116,3 @@ namespace PhoneVault.Controllers
 //    await _shoppingCartItemService.DeleteShoppingCartItem(id);
 //    return Ok();
 //}
-

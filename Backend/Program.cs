@@ -92,6 +92,8 @@ builder.Services.AddScoped<UserService>();
 
 builder.Services.AddScoped<ImageBlobService>();
 
+builder.Services.AddScoped<EmailService>();
+
 // Register Swagger services for API documentation
 builder.Services.AddSwaggerGen();
 
@@ -146,8 +148,11 @@ builder.Services.AddScoped<CategoryService>();
 var app = builder.Build();
 
 // Get the database context and apply migrations
-using var context = app.Services.GetRequiredService<PhoneVaultContext>();
-context.Database.Migrate();
+using (var scope = app.Services.CreateScope())
+{
+    using var context = scope.ServiceProvider.GetRequiredService<PhoneVaultContext>();
+    context.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

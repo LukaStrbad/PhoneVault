@@ -3,6 +3,8 @@ import { environment } from "../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { User } from "../model/user";
 import { firstValueFrom } from "rxjs";
+import { AuthService } from "./auth.service";
+import { EmailSetting } from "../model/email-settings";
 
 const url = `${environment.apiUrl}/api/user`;
 
@@ -37,5 +39,13 @@ export class UserService {
 
   async update(userId: string, isAdmin: boolean) {
     return await firstValueFrom(this.http.post<User>(`${url}/${userId}`, isAdmin));
+  }
+
+  async getEmailSettings() {
+    return await firstValueFrom(this.http.get<EmailSetting[]>(`${url}/emailSettings`));
+  }
+
+  async updateEmailSettings(emailSettings: EmailSetting[]) {
+    return await firstValueFrom(this.http.post(`${url}/emailSettings`, emailSettings));
   }
 }
