@@ -146,8 +146,8 @@ builder.Services.AddScoped<CategoryService>();
 var app = builder.Build();
 
 // Get the database context and apply migrations
-// using var context = app.Services.GetRequiredService<PhoneVaultContext>();
-// context.Database.Migrate();
+using var context = app.Services.GetRequiredService<PhoneVaultContext>();
+context.Database.Migrate();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
