@@ -1,5 +1,37 @@
 <div class="container">
 
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title">Color theme</h5>
+
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="themeCheckbox" id="autoThemeRadio"
+               [checked]="colorTheme == 'auto'" (click)="colorTheme = 'auto'">
+        <label class="form-check-label" for="autoThemeRadio">
+          Auto
+        </label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="themeCheckbox" id="lightThemeRadio"
+               [checked]="colorTheme == 'light'" (click)="colorTheme = 'light'">
+        <label class="form-check-label" for="lightThemeRadio">
+          Light
+        </label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="themeCheckbox" id="darkThemeRadio"
+               [checked]="colorTheme == 'dark'" (click)="colorTheme = 'dark'">
+        <label class="form-check-label" for="darkThemeRadio">
+          Dark
+        </label>
+      </div>
+
+    </div>
+
+  </div>
+
   @if (authService.isUserLoggedIn()) {
     <div class="card mt-3">
       <div class="card-body">

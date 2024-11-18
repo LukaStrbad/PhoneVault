@@ -56,4 +56,24 @@ export class SettingsComponent {
       this.toastComponent.show('Error', 'Failed to update email settings');
     }
   }
+
+  get colorTheme(): string {
+    return localStorage.getItem('theme') ?? 'auto';
+  }
+
+  set colorTheme(value: string) {
+    console.log('Setting theme to', value);
+    if (value != 'auto' && value != 'dark' && value != 'light') {
+      value = 'light';
+    }
+    localStorage.setItem('theme', value);
+
+    // Set data-bs-theme
+    if (value == 'auto') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-bs-theme', prefersDark ? 'dark' : 'light');
+    } else {
+      document.documentElement.setAttribute('data-bs-theme', value);
+    }
+  }
 }
