@@ -31,6 +31,31 @@ namespace PhoneVault.Services
 
         public async Task DeleteProductAsync(int id) =>
             await _productRepository.DeleteProduct(id);
-    }
 
+        public async Task UpdateProductImages(int id, IEnumerable<string> urls)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product is null)
+            {
+                throw new Exception("Product not found");
+            }
+
+            await _context.ProductImages
+                .Where(pi => pi.ProductId == id)
+                .ExecuteDeleteAsync();
+
+            var images = urls.Select(url => new Image { Url = url, ProductId = id });
+            await _context.ProductImages.AddRangeAsync(images);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetProductImagesAsync(int id)
+        {
+            var product = await _context.ProductImages
+                .Where(pi => pi.ProductId == id)
+                .ToListAsync();
+
+            return product.Select(pi => pi.Url);
+        }
+    }
 }

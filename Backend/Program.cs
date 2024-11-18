@@ -73,6 +73,8 @@ builder.Services.AddScoped<ShoppingCartItemService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<UserService>();
 
+builder.Services.AddScoped<ImageBlobService>();
+
 // Register Swagger services for API documentation
 builder.Services.AddSwaggerGen();
 

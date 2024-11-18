@@ -1,10 +1,26 @@
-import { Inject, Injectable, PLATFORM_ID, Signal, signal, WritableSignal } from '@angular/core';
+import {
+  afterNextRender,
+  Inject,
+  Injectable,
+  OnInit,
+  PLATFORM_ID,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { environment } from "../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { User } from "../model/user";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { firstValueFrom } from "rxjs";
-import { GoogleAuthProvider, getAuth, signInWithPopup, onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  getAuth,
+  signInWithPopup,
+  onAuthStateChanged,
+  User as FirebaseUser,
+  signOut
+} from "firebase/auth";
 import { isPlatformBrowser } from "@angular/common";
 
 const url = `${environment.apiUrl}/auth`;
@@ -48,32 +64,30 @@ export class AuthService {
   }
 
   constructor(
-    @Inject(PLATFORM_ID) platformId: Object,
+    @Inject(PLATFORM_ID) private platformId: Object,
     private http: HttpClient
   ) {
-    const accessToken = this.accessToken;
-    if (accessToken) {
-      try {
-        const decodedToken = this.setUserAndToken(accessToken);
+    afterNextRender(() => {
+      const accessToken = this.accessToken;
+      if (accessToken) {
+        try {
+          const decodedToken = this.setUserAndToken(accessToken);
 
-        const expired = decodedToken.exp * 1000 < Date.now();
-
-        if (expired) {
-          this.refreshTokens().then(() => {
+          const expired = decodedToken.exp * 1000 < Date.now();
+          if (expired) {
+            this.refreshTokens().then(() => {
+              this._isUserLoggedIn.set(true);
+            }, () => {
+              this.logout();
+            });
+          } else {
             this._isUserLoggedIn.set(true);
-            console.log("tokens refreshed");
-          }, () => {
-            this.logout();
-          });
-        } else {
-          this._isUserLoggedIn.set(true);
+          }
+        } catch (e) {
+          // Ignored
         }
-      } catch (e) {
-        // Ignored
       }
-    }
 
-    if (isPlatformBrowser(platformId)) {
       const auth = getAuth();
       onAuthStateChanged(auth, async user => {
         if (user) {
@@ -81,8 +95,8 @@ export class AuthService {
           await this.setGoogleUserAndToken(user);
           this._isUserLoggedIn.set(true);
         }
-      })
-    }
+      });
+    });
   }
 
   private setUserAndToken(accessToken: string) {

@@ -51,6 +51,20 @@ namespace PhoneVault.Controllers
             await _productService.DeleteProductAsync(id);
             return NoContent();
         }
+        
+        [HttpPost("{id:int}/images")]
+        public async Task<ActionResult> UpdateProductImages(int id, IEnumerable<string> urls)
+        {
+            await _productService.UpdateProductImages(id, urls);
+            return Ok();
+        }
+        
+        [HttpGet("{id:int}/images")]
+        public async Task<ActionResult<IEnumerable<string>>> GetProductImages(int id)
+        {
+            var images = await _productService.GetProductImagesAsync(id);
+            return Ok(images);
+        }
     }
 
 }

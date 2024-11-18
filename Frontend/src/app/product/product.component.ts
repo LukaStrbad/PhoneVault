@@ -29,6 +29,7 @@ export class ProductComponent {
   notFound = false;
   id: number;
   reviews: Review[] = [];
+  imagesUrls: string[] | null = null;
 
   commentForm = new FormGroup({
     comment: new FormControl('', Validators.required),
@@ -66,6 +67,10 @@ export class ProductComponent {
 
     reviewsService.getReviews(this.id).then(reviews => {
       this.reviews = reviews;
+    });
+
+    productService.getImages(this.id).then(imagesUrls => {
+      this.imagesUrls = imagesUrls;
     });
 
   }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhoneVault.Data;
 
@@ -11,9 +12,11 @@ using PhoneVault.Data;
 namespace PhoneVault.Migrations
 {
     [DbContext(typeof(PhoneVaultContext))]
-    partial class PhoneVaultContextModelSnapshot : ModelSnapshot
+    [Migration("20241118111729_AddImageBlobs")]
+    partial class AddImageBlobs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,29 +67,6 @@ namespace PhoneVault.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("PhoneVault.Models.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("PhoneVault.Models.ImageBlob", b =>
@@ -465,17 +445,6 @@ namespace PhoneVault.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserRefreshTokens");
-                });
-
-            modelBuilder.Entity("PhoneVault.Models.Image", b =>
-                {
-                    b.HasOne("PhoneVault.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("PhoneVault.Models.Order", b =>

@@ -5,8 +5,42 @@
     </div>
   } @else if (product) {
     <div class="row">
-      <div class="col-12 col-md-6 bg-primary">
-        IMAGE
+      <div class="col-12 col-md-6 d-flex justify-content-center align-items-center">
+        @if (imagesUrls === null) {
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        } @else {
+          <div id="imageCarousel" class="carousel slide">
+            <div class="carousel-indicators">
+              @for (url of imagesUrls; track $index) {
+                <button type="button" data-bs-target="#imageCarousel" attr.data-bs-slide-to="{{$index}}"
+                        [ngClass]="{'active': $index == 0}" [attr.aria-current]="$index == 0"
+                        attr.aria-label="Slide {{$index + 1}}"></button>
+              }
+            </div>
+
+            <div class="carousel-inner">
+              @for (url of imagesUrls; track $index) {
+                <div class="carousel-item" [ngClass]="{'active': $index == 0}">
+                  <img [src]="url" class="d-block w-100" alt="Product image">
+                </div>
+              }
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel"
+                    data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel"
+                    data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+
+          </div>
+        }
       </div>
 
       <div class="col-12 col-md-6">
