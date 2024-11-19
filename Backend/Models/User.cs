@@ -16,6 +16,8 @@ namespace PhoneVault.Models
         [MaxLength(64)] public string? UserType { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public UserAccountType AccountType { get; set; } = UserAccountType.Server;
 
         [JsonIgnore] public ICollection<Order> Orders { get; set; } = [];

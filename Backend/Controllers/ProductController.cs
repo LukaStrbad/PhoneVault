@@ -31,6 +31,7 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPost]
+        [Authorize("admin")]
         public async Task<ActionResult> AddProduct(Product product)
         {
             await _productService.AddProductAsync(product);
@@ -38,6 +39,7 @@ namespace PhoneVault.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize("admin")]
         public async Task<IActionResult> UpdateProduct(int id, Product product)
         {
             product.Id = id;
@@ -46,6 +48,7 @@ namespace PhoneVault.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize("admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             await _productService.DeleteProductAsync(id);
@@ -53,6 +56,7 @@ namespace PhoneVault.Controllers
         }
         
         [HttpPost("{id:int}/images")]
+        [Authorize("admin")]
         public async Task<ActionResult> UpdateProductImages(int id, IEnumerable<string> urls)
         {
             await _productService.UpdateProductImages(id, urls);

@@ -11,9 +11,11 @@
           <a class="nav-link active" routerLink="/">Home</a>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link active" routerLink="/my-orders">My Orders</a>
-        </li>
+        @if (auth.isUserLoggedIn()) {
+          <li class="nav-item">
+            <a class="nav-link active" routerLink="/my-orders">My Orders</a>
+          </li>
+        }
 
         <li class="nav-item">
           <a class="nav-link active" routerLink="/settings">Settings</a>

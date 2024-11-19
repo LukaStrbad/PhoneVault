@@ -19,6 +19,8 @@
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
-  <button class="btn btn-secondary" (click)="$event.preventDefault(); onGoogleLogin()">Google Login</button>
+  <div class="d-flex gap-2 flex-column align-items-start">
+    <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
+    <button class="btn btn-secondary" (click)="$event.preventDefault(); onGoogleLogin()">Google Login</button>
+  </div>
 </form>

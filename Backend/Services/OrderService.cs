@@ -11,11 +11,13 @@ namespace PhoneVault.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly PhoneVaultContext _context;
+        private readonly EmailService _emailService;
 
-        public OrderService(IOrderRepository orderRepository, PhoneVaultContext context)
+        public OrderService(IOrderRepository orderRepository, PhoneVaultContext context, EmailService emailService)
         {
             _orderRepository = orderRepository;
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<IEnumerable<Order>> GetAllOrders(ClaimsPrincipal claimsPrincipal)
@@ -97,6 +99,19 @@ namespace PhoneVault.Services
             }
 
             await _context.SaveChangesAsync();
+
+            var emailSettings = await _context.EmailSettings
+                .Include(es => es.User)
+                .Where(es => es.UserId == userId).FirstOrDefaultAsync();
+
+            if (emailSettings?.ShouldSendEmail(EmailSettings.EmailType.Order) == true)
+            {
+                var user = emailSettings.User;
+                if (user is not null)
+                {
+                    _emailService.SendOrderMail(user.Email, products, order.OrderItems);
+                }
+            }
         }
 
         public async Task UpdateOrder(Order order)

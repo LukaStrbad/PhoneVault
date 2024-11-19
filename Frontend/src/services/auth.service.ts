@@ -135,7 +135,8 @@ export class AuthService {
         id: decodedToken.user_id,
         name: decodedToken.name,
         email: decodedToken.email,
-        userType: "Customer"
+        userType: "Customer",
+        accountType: "Firebase"
       };
     } else {
       let decodedToken = token as DecodedToken;
@@ -144,7 +145,8 @@ export class AuthService {
         id: decodedToken.id,
         name: decodedToken.given_name,
         email: decodedToken.email,
-        userType
+        userType,
+        accountType: "Server"
       };
     }
   }
@@ -182,11 +184,7 @@ export class AuthService {
   async onGoogleLogin() {
     const provider = new GoogleAuthProvider();
     const auth = getAuth();
-    try {
-      const result = await signInWithPopup(auth, provider);
-    } catch (e) {
-      console.error(e);
-    }
+    return await signInWithPopup(auth, provider);
   }
 
 }

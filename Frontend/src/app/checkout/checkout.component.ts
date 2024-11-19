@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { ShoppingCartItem } from "../../model/ShoppingCartItem";
 import { ShoppingCartService } from "../../services/shopping-cart.service";
@@ -8,6 +8,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AuthService } from "../../services/auth.service";
 import { NgClass } from "@angular/common";
 import { OrderService } from "../../services/order.service";
+import { ToastComponent } from "../components/toast/toast.component";
 
 @Component({
   selector: 'app-checkout',
@@ -15,7 +16,8 @@ import { OrderService } from "../../services/order.service";
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    NgClass
+    NgClass,
+    ToastComponent
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
@@ -31,6 +33,8 @@ export class CheckoutComponent {
     expiry: new FormControl('', Validators.required),
     cvv: new FormControl('', Validators.required)
   });
+
+  @ViewChild('toast') private toastComponent!: ToastComponent;
 
   constructor(
     route: ActivatedRoute,
@@ -89,5 +93,7 @@ export class CheckoutComponent {
     this.checkoutForm.reset();
     this.items = [];
     await this.shoppingCart.clearCart();
+
+    this.toastComponent.show("Order successful", "Order placed successfully");
   }
 }

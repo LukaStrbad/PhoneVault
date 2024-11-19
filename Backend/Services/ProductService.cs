@@ -34,6 +34,9 @@ namespace PhoneVault.Services
                 var user = emailSettings.User;
                 if (user is null)
                     continue;
+
+                if (!emailSettings.ShouldSendEmail(EmailSettings.EmailType.NewProduct))
+                    continue;
                 
                 _emailService.SendNewProductMail(user.Email, product);
             }
