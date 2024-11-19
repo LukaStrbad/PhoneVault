@@ -15,6 +15,7 @@ import { UserListComponent } from "./admin/user-list/user-list.component";
 import { SettingsComponent } from "./settings/settings.component";
 import { CheckoutComponent } from "./checkout/checkout.component";
 import { MyOrdersComponent } from "./my-orders/my-orders.component";
+import { CategoriesComponent } from "./categories/categories.component";
 
 export const routes: Routes = [
   {
@@ -48,6 +49,14 @@ export const routes: Routes = [
   {
     path: 'my-orders',
     component: MyOrdersComponent
+  },
+  {
+    path: 'categories',
+    component: CategoriesComponent
+  },
+  {
+    path: 'category/:categoryId',
+    component: HomeComponent
   },
   {
     path: 'admin',

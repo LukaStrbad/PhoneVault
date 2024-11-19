@@ -19,8 +19,8 @@ namespace PhoneVault.Services
             _emailService = emailService;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync() =>
-            await _productRepository.GetAllProducts();
+        public async Task<IEnumerable<Product>> GetAllProductsAsync(int? categoryId) =>
+            await _productRepository.GetAllProducts(categoryId: categoryId);
 
         public async Task<Product> GetProductByIdAsync(int id) =>
             await _productRepository.GetProductById(id);

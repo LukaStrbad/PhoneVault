@@ -1,7 +1,7 @@
 <div class="card">
   <div class="card-body">
     <div class="card-title fs-4"><h4>{{ product.name }}</h4></div>
-    <div class="card-subtitle fw-bold fs-4">{{ product.sellPrice }} &euro;</div>
+    <div class="card-subtitle fw-bold fs-4">{{ priceString }}</div>
     <ul>
       @for (spec of specifications; track $index) {
         <li [ngClass]="{'invisible': spec === ''}">{{ spec }}</li>

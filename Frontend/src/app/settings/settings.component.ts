@@ -1,16 +1,18 @@
 import { Component, effect, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { UserService } from "../../services/user.service";
 import { EmailSetting } from "../../model/email-settings";
 import { AuthService } from "../../services/auth.service";
 import { ToastComponent } from "../components/toast/toast.component";
+import { ExchangeRateService } from "../../services/exchange-rate.service";
 
 @Component({
   selector: 'app-settings',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    ToastComponent
+    ToastComponent,
+    FormsModule
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
@@ -20,13 +22,19 @@ export class SettingsComponent {
     order: new FormControl(false),
     newProduct: new FormControl(false),
   });
+  currencies: string[] = ['EUR'];
 
   @ViewChild('toast') private toastComponent!: ToastComponent;
 
   constructor(
     private userService: UserService,
-    public authService: AuthService
+    public authService: AuthService,
+    public exchangeRate: ExchangeRateService
   ) {
+
+    exchangeRate.getExchangeRate().then(rate => {
+      this.currencies.push(...rate.map(r => r.valuta));
+    })
 
     effect(() => {
       if (authService.isUserLoggedIn()) {
@@ -75,5 +83,11 @@ export class SettingsComponent {
     } else {
       document.documentElement.setAttribute('data-bs-theme', value);
     }
+  }
+
+  onCurrencyChange($event: Event) {
+    const target = $event.target as HTMLSelectElement;
+    this.exchangeRate.selectedCurrency = target.value;
+    console.log('Currency changed to', target.value);
   }
 }

@@ -1,9 +1,10 @@
-import { Component, Signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { ShoppingCartService } from "../../services/shopping-cart.service";
 import { ShoppingCartItem } from "../../model/ShoppingCartItem";
 import { Product } from "../../model/product";
 import { ProductService } from "../../services/product.service";
 import { RouterLink } from "@angular/router";
+import { ExchangeRateService } from "../../services/exchange-rate.service";
 
 @Component({
   selector: 'app-shopping-cart',
@@ -17,12 +18,20 @@ import { RouterLink } from "@angular/router";
 export class ShoppingCartComponent {
   cart: ShoppingCartItemWithIndex[] = [];
   products: (Product | null)[] = [];
+  productPricesInCurrency: number[] = [];
+
+  currency = "€";
 
   constructor(
     private shoppingCart: ShoppingCartService,
-    private productService: ProductService
+    private productService: ProductService,
+    private exchangeRate: ExchangeRateService,
   ) {
     this.refreshProducts();
+
+    if (typeof window !== 'undefined' && exchangeRate.selectedCurrency !== 'EUR') {
+      this.currency = exchangeRate.selectedCurrency;
+    }
   }
 
   refreshProducts() {
@@ -36,6 +45,12 @@ export class ShoppingCartComponent {
       }
       this.productService.get(item.productId).then(p => {
         this.products[item.index] = p;
+      });
+    });
+
+    this.exchangeRate.getExchangeRate().then(() => {
+      this.productPricesInCurrency = this.cart.map(item => {
+        return this.exchangeRate.calculatePriceSync(this.products[item.index]?.sellPrice ?? 0);
       });
     });
   }

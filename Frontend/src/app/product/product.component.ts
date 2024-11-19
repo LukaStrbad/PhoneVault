@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { Product } from "../../model/product";
 import { ProductService } from "../../services/product.service";
@@ -10,6 +10,7 @@ import { ShoppingCartService } from "../../services/shopping-cart.service";
 import { ReviewCardComponent } from "../components/review-card/review-card.component";
 import { AuthService } from "../../services/auth.service";
 import { ReviewsService } from "../../services/reviews.service";
+import { ExchangeRateService } from "../../services/exchange-rate.service";
 
 @Component({
   selector: 'app-product',
@@ -25,12 +26,13 @@ import { ReviewsService } from "../../services/reviews.service";
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss'
 })
-export class ProductComponent {
+export class ProductComponent implements AfterViewInit{
   product?: Product;
   notFound = false;
   id: number;
   reviews: Review[] = [];
   imagesUrls: string[] | null = null;
+  priceString = "";
 
   commentForm = new FormGroup({
     comment: new FormControl('', Validators.required),
@@ -51,7 +53,9 @@ export class ProductComponent {
     productService: ProductService,
     private reviewsService: ReviewsService,
     private shoppingCart: ShoppingCartService,
-    public auth: AuthService
+    public auth: AuthService,
+    private exchangeRate: ExchangeRateService,
+    private cdr: ChangeDetectorRef
   ) {
     this.id = Number(route.snapshot.paramMap.get('id'));
     const state = router.getCurrentNavigation()?.extras.state;
@@ -61,6 +65,7 @@ export class ProductComponent {
     if (!this.product) {
       productService.get(this.id).then(product => {
         this.product = product;
+        this.priceString = `${this.product?.sellPrice} €`;
       }).catch(() => {
         this.notFound = true;
       });
@@ -74,6 +79,15 @@ export class ProductComponent {
       this.imagesUrls = imagesUrls;
     });
 
+  }
+
+  ngAfterViewInit() {
+    if (!this.product) {
+      return;
+    }
+    this.exchangeRate.calculatePrice(this.product?.sellPrice).then(price => {
+      this.priceString = `${price} ${this.exchangeRate.selectedCurrency}`;
+    });
   }
 
   async onSubmit() {
