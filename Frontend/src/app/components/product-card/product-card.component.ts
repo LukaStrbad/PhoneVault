@@ -4,6 +4,7 @@ import { CurrencyPipe, NgClass } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { ShoppingCartService } from "../../../services/shopping-cart.service";
 import { ExchangeRateService } from "../../../services/exchange-rate.service";
+import { ProductService } from "../../../services/product.service";
 
 const maxSpecificationLength = 3;
 
@@ -20,11 +21,13 @@ const maxSpecificationLength = 3;
 })
 export class ProductCardComponent implements AfterViewInit{
   @Input({ required: true }) product!: Product;
+  imageUrl?: string;
   priceString = "";
 
   constructor(
     private shoppingCart: ShoppingCartService,
     private exchangeRate: ExchangeRateService,
+    private productService: ProductService,
     private cdr: ChangeDetectorRef
   ) {
   }
@@ -34,6 +37,12 @@ export class ProductCardComponent implements AfterViewInit{
     this.cdr.detectChanges();
     this.exchangeRate.calculatePrice(this.product.sellPrice).then(price => {
       this.priceString = `${price} ${this.exchangeRate.selectedCurrency}`;
+    });
+
+    this.productService.getImages(this.product.id).then(images => {
+      if (images.length > 0) {
+        this.imageUrl = images[0];
+      }
     });
   }
 
