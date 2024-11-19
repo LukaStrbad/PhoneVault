@@ -1,12 +1,22 @@
 <div class="card">
   <div class="card-body">
-    <div class="card-title fs-4"><h4>{{ product.name }}</h4></div>
-    <div class="card-subtitle fw-bold fs-4">{{ priceString }}</div>
-    <ul>
-      @for (spec of specifications; track $index) {
-        <li [ngClass]="{'invisible': spec === ''}">{{ spec }}</li>
+    <div class="d-flex justify-content-between">
+      <div>
+      <div class="card-title fs-4"><h4>{{ product.name }}</h4></div>
+      <div class="card-subtitle fw-bold fs-4">{{ priceString }}</div>
+      <ul>
+        @for (spec of specifications; track $index) {
+          <li [ngClass]="{'invisible': spec === ''}">{{ spec }}</li>
+        }
+      </ul>
+      </div>
+
+      @if (imageUrl) {
+        <div>
+          <img [src]="imageUrl" alt="Product image">
+        </div>
       }
-    </ul>
+    </div>
     <a class="btn btn-success btn-sm mt-1" routerLink="/checkout" [queryParams]="{productId: product.id}">Buy now</a>
     <a [routerLink]="['/product', product.id]" [state]="{product}" class="btn btn-outline-primary btn-sm ms-2 mt-1">Details</a>
     @if (showAddToCartButton()) {
