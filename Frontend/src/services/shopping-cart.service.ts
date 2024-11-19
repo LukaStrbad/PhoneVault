@@ -23,11 +23,11 @@ export class ShoppingCartService {
     if (isPlatformBrowser(platformId)) {
       const localCart = this.getLocalCart();
       this.cart.set(localCart);
-    }
 
-    effect(() => {
-      localStorage.setItem('cartItems', JSON.stringify(this.cart()));
-    });
+      effect(() => {
+        localStorage.setItem('cartItems', JSON.stringify(this.cart()));
+      });
+    }
 
     let wasLoggedIn = false;
     effect(() => {
@@ -95,6 +95,13 @@ export class ShoppingCartService {
     this.cart.update(items => items.map(item => item.productId === productId ? { ...item, quantity } : item));
     if (this.authService.isUserLoggedIn()) {
       await this.updateCartItems(this.cart());
+    }
+  }
+
+  async clearCart() {
+    this.cart.set([]);
+    if (this.authService.isUserLoggedIn()) {
+      await this.updateCartItems([]);
     }
   }
 }

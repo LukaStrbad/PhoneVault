@@ -38,7 +38,7 @@ export class ProductService {
   }
 
   async create(product: ProductRequest) {
-    return firstValueFrom(this.http.post<ProductRequest>(url, product));
+    return firstValueFrom(this.http.post<Product>(url, product));
   }
 
   async update(id: number, product: ProductRequest) {
@@ -49,17 +49,11 @@ export class ProductService {
     return firstValueFrom(this.http.delete<void>(`${url}/${id}`));
   }
 
-  async getReviews(productId: number) {
-    const reviews = await firstValueFrom(this.http.get<Review[]>(`${url}/${productId}/reviews`));
-    return reviews.map(review => {
-      return {
-        ...review,
-        createdAt: new Date(review.createdAt)
-      };
-    })
+  async getImages(id: number) {
+    return firstValueFrom(this.http.get<string[]>(`${url}/${id}/images`));
   }
 
-  async addReview(productId: number, rating: number, comment: string) {
-    return firstValueFrom(this.http.post<Review>(`${url}/${productId}/reviews`, { rating, comment }));
+  async updateImages(id: number, images: string[]) {
+    return firstValueFrom(this.http.post<string[]>(`${url}/${id}/images`, images));
   }
 }

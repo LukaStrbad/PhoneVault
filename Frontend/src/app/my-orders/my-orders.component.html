@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Shipping Address</th>
+        <th>Date</th>
+        <th>Order Items</th>
+        <th>Total (&euro;)</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @for (order of orders; track order.id) {
+          <tr>
+            <td>{{ order.shippingAddress }}</td>
+            <td>{{ order.orderDate | date:'dd.MM.yyyy. HH:mm' }}</td>
+            <td>
+              <ul>
+                @for (item of order.orderItems; track item.productId) {
+                  <li>{{ item.quantity }} x {{ productName(item.productId) }}
+                    (total: {{ item.priceAtPurchase * item.quantity }} &euro;)
+                  </li>
+                }
+              </ul>
+            </td>
+            <td>{{ totalPrice(order) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

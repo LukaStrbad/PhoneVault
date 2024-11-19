@@ -1,0 +1,30 @@
+<div class="card mb-2">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <app-star-rating [(rating)]="review.rating" [interactive]="editing"></app-star-rating>
+      <div>
+        <span class="fw-bold">{{ review.userName }}</span>
+        <span class="ms-2 me-2">|</span>
+        <span>{{ review.createdAt | date:'dd.MM.yyyy. HH:mm' }}</span>
+      </div>
+    </div>
+    <div>
+      @if (editing) {
+        <textarea class="form-control my-2" rows="3" [(ngModel)]="review.comment"></textarea>
+      } @else {
+        <p>{{ review.comment }}</p>
+      }
+      @if (editable) {
+        <div class="d-flex justify-content-end">
+          @if (editing) {
+            <button class="btn btn-outline-secondary btn-sm me-2" (click)="onCancelClick()">Cancel</button>
+            <button class="btn btn-outline-primary btn-sm" (click)="onSaveClick()">Save</button>
+          } @else {
+            <button class="btn btn-outline-danger btn-sm me-2" (click)="onDeleteClick()">Delete</button>
+            <button class="btn btn-outline-secondary btn-sm" (click)="onEditClick()">Edit</button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

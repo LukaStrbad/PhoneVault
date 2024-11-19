@@ -21,9 +21,8 @@ export class ProductCardComponent {
   @Input({ required: true }) product!: Product;
 
   constructor(
-    private cart: ShoppingCartService
+    private shoppingCart: ShoppingCartService
   ) {
-
   }
 
   get specifications(): string[] {
@@ -32,15 +31,15 @@ export class ProductCardComponent {
     return specs.concat(new Array(maxSpecificationLength - specs.length).fill(""));
   }
 
-  addToCart() {
-    this.cart.addToCart(this.product);
+  async addToCart() {
+    await this.shoppingCart.addToCart(this.product);
   }
 
-  removeFromCart() {
-    this.cart.removeFromCart(this.product.id);
+  async removeFromCart() {
+    await this.shoppingCart.removeFromCart(this.product.id);
   }
 
   showAddToCartButton() {
-    return !this.cart.isProductInCart(this.product.id);
+    return !this.shoppingCart.isProductInCart(this.product.id);
   }
 }

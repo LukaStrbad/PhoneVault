@@ -1,6 +1,8 @@
 ﻿export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   userType: "Customer" | "Admin";
+  createdAt?: Date;
+  updatedAt?: Date;
 }

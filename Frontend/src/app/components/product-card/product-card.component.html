@@ -3,11 +3,11 @@
     <div class="card-title fs-4"><h4>{{ product.name }}</h4></div>
     <div class="card-subtitle fw-bold fs-4">{{ product.sellPrice }} &euro;</div>
     <ul>
-      @for (spec of specifications; track spec) {
+      @for (spec of specifications; track $index) {
         <li [ngClass]="{'invisible': spec === ''}">{{ spec }}</li>
       }
     </ul>
-    <a class="btn btn-success btn-sm mt-1">Buy now</a>
+    <a class="btn btn-success btn-sm mt-1" routerLink="/checkout" [queryParams]="{productId: product.id}">Buy now</a>
     <a [routerLink]="['/product', product.id]" [state]="{product}" class="btn btn-outline-primary btn-sm ms-2 mt-1">Details</a>
     @if (showAddToCartButton()) {
       <button (click)="addToCart()" class="btn btn-outline-secondary btn-sm ms-2 mt-1" (close)="addToCart()">Add to cart

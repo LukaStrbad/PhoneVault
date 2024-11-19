@@ -10,7 +10,7 @@ import { ShoppingCartService } from "../../../services/shopping-cart.service";
     RouterLink
   ],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
   constructor(
