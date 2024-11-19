@@ -28,6 +28,7 @@ export class UserListComponent {
   ) {
     userService.getAll().then(users => {
       this.users = users;
+      console.log("Users: ", users);
     });
   }
 

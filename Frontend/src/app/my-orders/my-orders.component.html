@@ -6,7 +6,7 @@
         <th>Shipping Address</th>
         <th>Date</th>
         <th>Order Items</th>
-        <th>Total (&euro;)</th>
+        <th>Total ({{currency}})</th>
       </tr>
       </thead>
 
@@ -24,7 +24,7 @@
                 }
               </ul>
             </td>
-            <td>{{ totalPrice(order) }}</td>
+            <td>{{ totalPricesStrings[$index] }}</td>
           </tr>
         }
       </tbody>

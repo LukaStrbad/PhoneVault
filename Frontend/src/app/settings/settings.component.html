@@ -27,9 +27,19 @@
           Dark
         </label>
       </div>
-
     </div>
+  </div>
 
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title">Display currency</h5>
+
+      <select class="form-select" aria-label="Display currency select" (change)="onCurrencyChange($event)">
+        @for (currency of currencies; track currency) {
+          <option [value]="currency" [selected]="exchangeRate.selectedCurrency == currency">{{ currency }}</option>
+        }
+      </select>
+    </div>
   </div>
 
   @if (authService.isUserLoggedIn()) {

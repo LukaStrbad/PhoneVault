@@ -16,8 +16,9 @@ export class ProductService {
   constructor(private http: HttpClient) {
   }
 
-  async getAll() {
-    this._productCache = await firstValueFrom(this.http.get<Product[]>(url));
+  async getAll(categoryId?: number) {
+    const requestUrl = categoryId ? `${url}?categoryId=${categoryId}` : url;
+    this._productCache = await firstValueFrom(this.http.get<Product[]>(requestUrl));
     return this._productCache;
   }
 

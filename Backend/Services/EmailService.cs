@@ -56,13 +56,25 @@ public class EmailService
         }
     }
 
-    public void SendOrderMail(string recipientAddress)
+    public void SendOrderMail(string recipientAddress, List<Product> products, ICollection<OrderItem> orderOrderItems)
     {
+        var orderString = string.Join("\n", orderOrderItems.Select(item =>
+        {
+            var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+            var productName = product?.Name ?? $"Unknown product (id: {item.ProductId})";
+            var totalPrice = item.PriceAtPurchase * item.Quantity;
+            return $"\t- {productName} x {item.Quantity} (${totalPrice})";
+        }));
+        
+        var totalPrice = orderOrderItems.Sum(oi => oi.PriceAtPurchase * oi.Quantity);
+        
         SendEmail(recipientAddress, "Order Confirmation",
-            """
+            $"""
             Thank you for your order. 
-            Order confirmation and more details will arrive in the following email.
-
+            Here is the list of products you have ordered:
+            {orderString}
+            Total price: ${totalPrice} €
+            
             Your PhoneVault team!
             """);
     }

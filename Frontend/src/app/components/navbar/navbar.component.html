@@ -12,8 +12,14 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link active" routerLink="/my-orders">My Orders</a>
+          <a class="nav-link active" routerLink="/categories">Categories</a>
         </li>
+
+        @if (auth.isUserLoggedIn()) {
+          <li class="nav-item">
+            <a class="nav-link active" routerLink="/my-orders">My Orders</a>
+          </li>
+        }
 
         <li class="nav-item">
           <a class="nav-link active" routerLink="/settings">Settings</a>

@@ -4,9 +4,9 @@
       <thead>
       <tr>
         <th>Product name</th>
-        <th>Price (&euro;)</th>
+        <th>Price ({{ currency }})</th>
         <th>Quantity</th>
-        <th>Total price (&euro;)</th>
+        <th>Total price ({{ currency }})</th>
         <th></th>
       </tr>
       </thead>
@@ -17,7 +17,7 @@
             @if (products[item.index]) {
               <td><a [routerLink]="['/product', item.productId]"
                      [state]="{product: products[item.index]}">{{ products[item.index]!.name }}</a></td>
-              <td>{{ products[item.index]!.sellPrice }} &euro;</td>
+              <td>{{ productPricesInCurrency[item.index] }} {{ currency }}</td>
               <td>
                 <div class="btn-group btn-group-sm" role="group" aria-label="Quantity select">
                   <button type="button" class="btn btn-primary" (click)="decreaseQuantity(item)">-</button>
@@ -25,7 +25,7 @@
                   <button type="button" class="btn btn-primary" (click)="increaseQuantity(item)">+</button>
                 </div>
               </td>
-              <td>{{ products[item.index]!.sellPrice * item.quantity }} &euro;</td>
+              <td>{{ productPricesInCurrency[item.index] * item.quantity }} {{ currency }}</td>
               <td>
                 <button class="btn btn-danger btn-sm" (click)="removeItem(item)">X</button>
               </td>

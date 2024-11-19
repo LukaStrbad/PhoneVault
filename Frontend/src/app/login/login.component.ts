@@ -39,6 +39,11 @@ export class LoginComponent {
   }
 
   async onGoogleLogin() {
-    await this.auth.onGoogleLogin();
+    try {
+      await this.auth.onGoogleLogin();
+      await this.router.navigate(['/']);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
